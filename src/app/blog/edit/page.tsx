@@ -83,7 +83,7 @@ function EditPageContent() {
       // 尝试解析blocks
       let blocks: Block[] = []
       try {
-        blocks = JSON.parse(data.content)
+        //blocks = JSON.parse(data.content)
       } catch (e) {
         // 解析失败，检查是否有标题块
         const hasHeadingBlock = blocks.some(block => block.type === 'heading' && block.attrs?.level === 1)
@@ -98,7 +98,7 @@ function EditPageContent() {
               content: [{ 
                 type: 'heading', 
                 attrs: { level: 1 },
-                content: [{ type: 'text', text: data.title || '无标题文档' }] 
+                //content: [{ type: 'text', text: data.title || '无标题文档' }] 
               }] 
             },
             attrs: { level: 1 }
@@ -114,7 +114,7 @@ function EditPageContent() {
               type: 'doc', 
               content: [{ 
                 type: 'paragraph',
-                content: [{ type: 'text', text: data.content?.replace(/<[^>]+>/g, '') || '' }] 
+                //content: [{ type: 'text', text: data.content?.replace(/<[^>]+>/g, '') || '' }] 
               }] 
             } 
           })
@@ -122,15 +122,15 @@ function EditPageContent() {
       }
       
       // 将API返回的博客转换为Document格式
-      const doc: Document = {
-        id: data.id.toString(),
-        title: data.title || '',
-        blocks: blocks,
-        createdAt: data.created_at || new Date().toISOString(),
-        updatedAt: data.updated_at || new Date().toISOString()
-      }
+      //const doc: Document = {
+        //id: data.id.toString(),
+        //title: data.title || '',
+        //blocks: blocks,
+        //createdAt: data.created_at || new Date().toISOString(),
+        //updatedAt: data.updated_at || new Date().toISOString()
+     // }
       
-      setDocument(doc)
+      //setDocument(doc)
     } catch (error) {
       setError(error instanceof Error ? error.message : '获取文章详情失败，请稍后重试')
     } finally {
@@ -194,9 +194,9 @@ function EditPageContent() {
       toast.success(blogId ? '文章已成功更新' : '文章已成功创建')
       
       // 如果是新创建的文章，更新URL
-      if (!blogId && data.id) {
-        router.push(`/blog/edit?id=${data.id}`)
-      }
+      //if (!blogId && data.id) {
+        //router.push(`/blog/edit?id=${data.id}`)
+      //}
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '保存失败，请稍后重试')
     } finally {
