@@ -128,7 +128,7 @@ function EditPageContent() {
         //blocks: blocks,
         //createdAt: data.created_at || new Date().toISOString(),
         //updatedAt: data.updated_at || new Date().toISOString()
-     // }
+      //}
       
       //setDocument(doc)
     } catch (error) {
@@ -195,7 +195,7 @@ function EditPageContent() {
       
       // 如果是新创建的文章，更新URL
       //if (!blogId && data.id) {
-        //router.push(`/blog/edit?id=${data.id}`)
+      //  router.push(`/blog/edit?id=${data.id}`)
       //}
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '保存失败，请稍后重试')
