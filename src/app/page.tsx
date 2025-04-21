@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, Book, Code, MessageSquare, Video, Compass } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { CodingIllustration } from '@/components/Home/CodingIllustration'
+import { CodingIllustration } from '../components/Home/CodingIllustration'
 
 // 动画变体
 const containerVariants = {

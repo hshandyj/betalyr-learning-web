@@ -38,16 +38,16 @@ export const BlogList = forwardRef((props, ref) => {
       const apiData = await response.json()
       
       // 将API返回的数据转换为Document类型
-      // const documents: Document[] = (apiData.data || []).map((post: any) => ({
-      //   id: post.id.toString(),
-      //   title: post.title,
-      //   blocks: [], // 列表页暂不加载blocks内容
-      //   createdAt: post.created_at || new Date().toISOString(),
-      //   updatedAt: post.updated_at || post.created_at || new Date().toISOString()
-      // }))
+      const documents: Document[] = (apiData.data || []).map((post: any) => ({
+        id: post.id.toString(),
+        title: post.title,
+        blocks: [], // 列表页暂不加载blocks内容
+        createdAt: post.created_at || new Date().toISOString(),
+        updatedAt: post.updated_at || post.created_at || new Date().toISOString()
+      }))
       
-      //setPosts(documents)
-      //setTotalPosts(apiData.total || 0)
+      setPosts(documents)
+      setTotalPosts(apiData.total || 0)
     } catch (error) {
       setError(error instanceof Error ? error.message : '获取文章列表失败，请稍后重试')
       setPosts([])
