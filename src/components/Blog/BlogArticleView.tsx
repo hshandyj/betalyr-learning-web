@@ -54,7 +54,7 @@ export function BlogArticleView({ articleId }: BlogArticleViewProps) {
       
       try {
         // 尝试将content解析为JSON格式的Block数组
-        blocks = JSON.parse(data.content)
+        // blocks = JSON.parse(data.content)
       } catch (e) {
         // 如果解析失败，则创建一个包含内容的段落块
         blocks = [{ 
@@ -64,30 +64,30 @@ export function BlogArticleView({ articleId }: BlogArticleViewProps) {
             type: 'doc', 
             content: [{ 
               type: 'paragraph',
-              content: [{ type: 'text', text: data.content.replace(/<[^>]+>/g, '') }] 
+              //content: [{ type: 'text', text: data.content.replace(/<[^>]+>/g, '') }] 
             }] 
           } 
         }]
       }
       
-      const doc: Document = {
-        id: data.id.toString(),
-        title: data.title,
-        blocks: blocks,
-        createdAt: data.created_at || new Date().toISOString(),
-        updatedAt: data.updated_at || new Date().toISOString()
-      }
+      // const doc: Document = {
+      //   id: data.id.toString(),
+      //   title: data.title,
+      //   blocks: blocks,
+      //   createdAt: data.created_at || new Date().toISOString(),
+      //   updatedAt: data.updated_at || new Date().toISOString()
+      // }
       
-      setDocument(doc)
+      //setDocument(doc)
       
       // 在客户端格式化日期
-      if (data.created_at) {
-        setFormattedDate(new Date(data.created_at).toLocaleDateString('zh-CN', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }))
-      }
+      // if (data.created_at) {
+      //   setFormattedDate(new Date(data.created_at).toLocaleDateString('zh-CN', {
+      //     year: 'numeric',
+      //     month: 'long',
+      //     day: 'numeric'
+      //   }))
+      // }
     } catch (error) {
       setError(error instanceof Error ? error.message : '获取文章详情失败，请稍后重试')
     } finally {
