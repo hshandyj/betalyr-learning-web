@@ -11,11 +11,15 @@ import { useRouter } from "next/navigation";
 import { startTransition, useState } from "react";
 
 import Image from "next/image";
-import { Document } from "@prisma/client";
+import { Document } from "@/types/db";
 import { Icons } from "../../Icons";
 import { cn } from "@/lib/utils";
 import Menu from "./Menu";
 import MenuDialog from "./MenuDialog";
+import { getApiUrl } from "@/config/getEnvConfig";
+
+// API端点
+const API_BASE_URL = getApiUrl();
 
 interface CoverImageProps {
   id: string;
@@ -44,7 +48,7 @@ const CoverImage: React.FC<CoverImageProps> = ({ id, coverImage }) => {
           coverImageUrl: result.info.secure_url,
         };
 
-        await axios.patch(`/api/images/${id}`, payload);
+        await axios.patch(`${API_BASE_URL}/images/${id}`, payload);
 
         startTransition(() => {
           queryClient.invalidateQueries({ queryKey: ["docs"] });
@@ -75,7 +79,7 @@ const CoverImage: React.FC<CoverImageProps> = ({ id, coverImage }) => {
 
       const payload: RemoveCoverImagePayload = { id, isCoverImage: true };
 
-      await axios.patch(`/api/images/remove/${id}`, payload);
+      await axios.patch(`${API_BASE_URL}/images/remove/${id}`, payload);
 
       startTransition(() => {
         queryClient.invalidateQueries({ queryKey: ["docs"] });

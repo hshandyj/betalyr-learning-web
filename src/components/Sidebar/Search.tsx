@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Links from "@/components/Sidebar/Links";
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../types/db";
 
 interface SearchProps {
   docs: DocumentType[] | undefined;

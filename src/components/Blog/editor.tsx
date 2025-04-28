@@ -6,18 +6,18 @@ import { useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { TipTapEditorExtensions } from "@/components/Blog/lib/extensions-editor";
 import { TipTapEditorProps } from "@/components/Blog/lib/props";
-import axios, { AxiosError } from "axios";
-import { UpdateDocumentPayload } from "@/lib/validators/Documents";
+import { AxiosError } from "axios";
 import { toastError } from "@/hooks/use-toast";
 import { useSaving } from "@/store/use-saving";
 import Skeleton from "./components/Skeleton";
 import TextMenu from "./BubbleMenu/TextMenu";
+import { updateDoc } from "@/service/notionEditorService";
 
 export default function Editor({
   editorJson,
   id,
 }: {
-  editorJson: any;
+  editorJson: JSONContent;
   id: string;
 }) {
   const router = useRouter();
@@ -32,9 +32,8 @@ export default function Editor({
     async (editorJson: JSONContent) => {
       try {
         setIsSaving(true);
-        const payload: UpdateDocumentPayload = { id, editorJson };
-
-        await axios.patch(`/api/documents/${id}`, payload);
+        
+        await updateDoc(id, { editorJson });
 
         startTransition(() => {
           // Force a cache invalidation.
@@ -44,15 +43,15 @@ export default function Editor({
         if (error instanceof AxiosError) {
           if (error.response?.status === 422) {
             toastError({
-              title: "Invalid payload axios.",
-              axiosPayloadDesc: "Please provide id and editorJson",
+              title: "无效的请求数据",
+              axiosPayloadDesc: "请提供正确的ID和编辑器内容",
               error,
             });
             return;
           }
         }
 
-        toastError({ error, title: "Failed update document" });
+        toastError({ error, title: "更新文档失败" });
       } finally {
         startTransition(() => {
           setIsSaving(false);

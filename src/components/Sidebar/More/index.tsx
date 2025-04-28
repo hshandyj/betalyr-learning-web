@@ -1,14 +1,14 @@
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../../types/db";
 import { useState } from "react";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { type UseMutateFunction } from "@tanstack/react-query";
 import { type MutationProps } from "../Links";
 
-import tailwindConfig from "../../../../tailwind.config.js";
-import resolveConfig from "tailwindcss/resolveConfig";
 import MoreDropDown from "./MoreDropDown";
 import MoreDialog from "./MoreDialog";
-const fullConfig = resolveConfig<any>(tailwindConfig);
+
+// 硬编码sm断点为640px (标准tailwind sm断点)
+const SM_BREAKPOINT = 640;
 
 interface MoreProps {
   doc: DocumentType;
@@ -41,15 +41,11 @@ const More: React.FC<MoreProps> = ({ doc, mutate, isMobile }) => {
   // make sure when use useWindowSize always on component that get show by useEffect
   // this <More /> used in MobileSidebar that get show by useEffect
   const { width } = useWindowSize();
-  const smBreakPoint = parseInt(
-    fullConfig.theme.screens.sm.replace("px", ""),
-    10
-  );
 
   return (
     <>
       {/* show when  screen size bigger than sm (tablet and dekstop)*/}
-      {width && width >= smBreakPoint && (
+      {width && width >= SM_BREAKPOINT && (
         <MoreDropDown
           {...{
             isOpen,
@@ -65,7 +61,7 @@ const More: React.FC<MoreProps> = ({ doc, mutate, isMobile }) => {
       )}
 
       {/* show when screen size same or less than sm / 640px / phone*/}
-      {width && width < smBreakPoint && (
+      {width && width < SM_BREAKPOINT && (
         <MoreDialog
           {...{
             isOpen,

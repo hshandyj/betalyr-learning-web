@@ -18,7 +18,8 @@ import {
 
 import { cn, preventBubbling } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../../types/db";
+import { buttonVariants } from "@/components/ui/button";
 
 interface MoreDropDownprops {
   // eslint-disable-next-line no-unused-vars
@@ -74,9 +75,6 @@ const MoreDropDown: React.FC<MoreDropDownprops> = ({
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialogContent
-        overlayCallback={(e) => {
-          preventBubbling(e, { noPreventDefault: true });
-        }}
         onClick={(e) => {
           preventBubbling(e, { noPreventDefault: true });
         }}
@@ -94,7 +92,7 @@ const MoreDropDown: React.FC<MoreDropDownprops> = ({
           </AlertDialogCancel>
           <AlertDialogAction
             disabled={isLoading}
-            variant={"destructive"}
+            className={buttonVariants({ variant: "destructive" })}
             onClick={(e) =>
               preventBubbling(e, {
                 callback: () => onDelete(doc),

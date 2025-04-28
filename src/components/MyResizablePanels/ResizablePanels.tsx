@@ -6,7 +6,7 @@ import MobileSidebar from "@/components/Sidebar/MobileSidebar";
 import { cn } from "@/lib/utils";
 import { toast, toastError } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../types/db";
 import { useShowMobileSidebar } from "@/hooks/use-show-mobile-sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -14,6 +14,10 @@ import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
 import PanelGroup from "./PanelGroup";
 import PanelSidebar from "./PanelSidebar";
 import PanelResizeHandler from "./PanelResizeHandler";
+import { getApiUrl } from "@/config/getEnvConfig";
+
+// API端点
+const API_BASE_URL = getApiUrl();
 
 interface Data {
   data: DocumentType[] | undefined;
@@ -24,7 +28,7 @@ const useDocs = () => {
     staleTime: 10 * (60 * 1000), // 10 mins
     queryKey: ["docs"],
     queryFn: async () => {
-      const { data }: Data = await axios.get("/api/documents");
+      const { data }: Data = await axios.get(`${API_BASE_URL}/documents`);
       return data;
     },
   });
@@ -47,7 +51,7 @@ export default function ReactResizablePanels({
   const { mutate: addDoc } = useMutation({
     mutationFn: async () => {
       const { data: newDoc }: { data: string } = await axios.post(
-        "/api/untitled"
+        `${API_BASE_URL}/untitled`
       );
 
       return newDoc;

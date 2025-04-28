@@ -4,7 +4,7 @@ import { formatTimeToNow } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 interface UpdatedProps {
-  updatedAt: Date;
+  updatedAt: Date | string;
 }
 
 const Updated: React.FC<UpdatedProps> = ({ updatedAt }) => {

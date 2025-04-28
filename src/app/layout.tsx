@@ -9,7 +9,7 @@ import { Toaster } from 'sonner'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "BetaLyr's Programming Guides",
+  title: "BetaLyrGD",
   description: "A programming guides built with Next.js and Tailwind CSS",
 }
 

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Document } from "@prisma/client";
+import { Document } from "@/types/db";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   IconImagePayload,

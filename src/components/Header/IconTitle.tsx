@@ -1,7 +1,7 @@
 "use client";
 
 import { useTitle } from "@/store/use-title";
-import { Document } from "@prisma/client";
+import { Document } from "@/types/db";
 import Image from "next/image";
 
 interface IconTitleProps {

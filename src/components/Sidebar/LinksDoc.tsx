@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Links from "@/components/Sidebar/Links";
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../types/db";
 import { cn } from "@/lib/utils";
 
 interface LinksDocProps {
@@ -28,7 +28,6 @@ const LinksDoc: React.FC<LinksDocProps> = ({
   return (
     <ScrollArea
       className="flex-1 w-full px-2"
-      viewportClassName="[&>div]:!block"
       type="auto"
     >
       <ul className="p-1 h-full space-y-1 pb-20">

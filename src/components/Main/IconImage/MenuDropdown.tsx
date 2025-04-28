@@ -5,8 +5,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../ui/DropdownMenu";
-import { Icons } from "../../Icons";
+} from "@/components/ui/dropdown-menu";
+import { Icons } from "@/components/Icons";
 
 import {
   CLOUDINARY_UPLOAD_PRESET,

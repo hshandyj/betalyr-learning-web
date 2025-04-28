@@ -1,6 +1,6 @@
 import ToggleBtnDekstop from "./ToggleBtnDekstop";
 import ToggleBtnMobile from "./ToggleBtnMobile";
-import { Document } from "@prisma/client";
+import { Document } from "@/types/db";
 import Saving from "./Saving";
 import Updated from "./Updated";
 import IconTitle from "./IconTitle";

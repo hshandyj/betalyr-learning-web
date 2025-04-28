@@ -1,149 +1,87 @@
-import { findDoc } from "@/actions/findDoc";
-import Header from "@/components/Header";
-import CoverImgUploadBtn from "@/components/Main/CoverImgUploadBtn";
-import CoverImage from "@/components/Main/coverImage";
-import IconImgUploadBtn from "@/components/Main/IconImgUploadBtn";
-import { cn, isValidObjectID } from "@/lib/utils";
-import { Metadata, ResolvingMetadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import IconImage from "@/components/Main/IconImage";
-import Editor from "@/components/Blog/editor";
-import { getIsOwner } from "@/actions/getIsOwner";
-import { auth } from "@clerk/nextjs";
-import Forbidden from "@/components/Main/Forbidden";
-import Title from "@/components/Main/Title";
-import { ScrollArea } from "@/components/ui/scroll-area";
+"use client";
 
-interface ParamsProps {
-  params: { documentId: string };
-}
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
+import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
 
-const Page: React.FC<ParamsProps> = async ({ params: { documentId } }) => {
-  const validObjectID = isValidObjectID(documentId);
+export default function BlogEntryPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastDocumentId, setLastDocumentId] = useState<string | null>(null);
 
-  if (!validObjectID) return notFound();
+  // 在客户端加载时检查localStorage
+  useEffect(() => {
+    const storedId = localStorage.getItem(LOCAL_LAST_DOCUMENT_KEY);
+    if (storedId) {
+      setLastDocumentId(storedId);
+    }
+  }, []);
 
-  const doc = await findDoc(documentId);
-
-  if (!doc) return notFound();
-
-  const { userId } = auth();
-
-  if (!userId) {
-    return redirect(`/$sign-in`);
-  }
-
-  const isOwner = await getIsOwner(documentId, userId);
-
-  if (!isOwner) {
-    return <Forbidden />;
-  }
-
-  const { title, coverImage, iconImage, editorJson } = doc;
+  // 创建新文档或进入上次编辑的文档
+  const enterEditor = async () => {
+    setIsLoading(true);
+    
+    try {
+      if (lastDocumentId) {
+        // 验证文档是否存在
+        const docExists = await findDoc(lastDocumentId);
+        if (docExists) {
+          router.push(`/blog/edit?id=${lastDocumentId}`);
+          return;
+        }
+      }
+      
+      // 如果没有上次编辑的文档ID或文档不存在，创建新文档
+      const newDoc = await createEmptyDoc();
+      
+      if (!newDoc || !newDoc.id) {
+        throw new Error("创建文档失败");
+      }
+      
+      // 保存新文档ID到localStorage
+      localStorage.setItem(LOCAL_LAST_DOCUMENT_KEY, newDoc.id);
+      
+      // 导航到编辑器页面
+      router.push(`/blog/edit?id=${newDoc.id}`);
+    } catch (error) {
+      console.error("Error entering editor:", error);
+      // 这里可以添加错误处理，比如显示Toast提示
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <>
-      <Header doc={doc} />
-
-      <ScrollArea className="h-[calc(100vh_-_48px)]" type="always">
-        <main className="flex flex-col h-[inherit]">
-          {coverImage && <CoverImage coverImage={coverImage} id={documentId} />}
-
-          <section className="flex flex-col flex-1 w-full">
-            <div
-              className={cn(
-                "group flex flex-col shrink-0 px-10 md:px-24 w-full max-w-[900px] mx-auto relative",
-                iconImage && coverImage && "pt-[70px]",
-                !iconImage && coverImage && "pt-[25px]",
-                iconImage && !coverImage && "pt-16",
-                !iconImage && !coverImage && "pt-10"
-              )}
-            >
-              {iconImage && (
-                <IconImage
-                  id={documentId}
-                  isCoverImage={!!coverImage}
-                  iconImage={iconImage}
-                />
-              )}
-
-              {!(iconImage && coverImage) && (
-                <div className="h-6 inline-flex gap-2 mt-5">
-                  {!iconImage && <IconImgUploadBtn id={documentId} />}
-                  {!coverImage && <CoverImgUploadBtn id={documentId} />}
-                </div>
-              )}
-
-              <Title currentTitle={title} id={documentId} />
-            </div>
-
-            <Editor id={documentId} editorJson={editorJson} />
-          </section>
-        </main>
-      </ScrollArea>
-    </>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+      <div className="text-center space-y-8 p-8 max-w-md">
+        <h1 className="text-4xl font-bold">博客编辑器</h1>
+        <p className="text-lg text-muted-foreground">
+          {lastDocumentId 
+            ? "点击下方按钮继续编辑上次的文档" 
+            : "欢迎使用博客编辑器，点击下方按钮创建新文档"}
+        </p>
+        
+        <Button 
+          size="lg" 
+          onClick={enterEditor} 
+          disabled={isLoading}
+          className="w-full"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              加载中...
+            </>
+          ) : lastDocumentId ? (
+            "继续编辑"
+          ) : (
+            "创建新文档"
+          )}
+        </Button>
+      </div>
+    </div>
   );
-};
-
-export default Page;
-
-export async function generateMetadata(
-  { params: { documentId } }: ParamsProps,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const previousImages = (await parent).openGraph?.images || [];
-
-  const validObjectID = isValidObjectID(documentId);
-
-  if (!validObjectID)
-    return {
-      title: "Not Found",
-      openGraph: {
-        images: [...previousImages],
-      },
-      icons: {
-        icon: [
-          {
-            type: "image/x-icon",
-            sizes: "any",
-            url: "/favicon.ico",
-          },
-        ],
-      },
-    };
-
-  // fetch data
-  const document = await findDoc(documentId);
-
-  const { userId } = auth();
-
-  if (!userId) {
-    return redirect(`/$sign-in`);
-  }
-
-  const isOwner = await getIsOwner(documentId, userId);
-
-  // optionally access and extend (rather than replace) parent metadata
-
-  return {
-    title: !document
-      ? "Not Found"
-      : !isOwner
-      ? "Forbidden"
-      : document.title || "Untitled",
-    openGraph: {
-      images: [...previousImages],
-    },
-    icons: {
-      icon: [
-        {
-          type: "image/x-icon",
-          sizes: "any",
-          url: !isOwner
-            ? "/favicon.ico"
-            : document?.iconImage?.url ?? "/favicon.ico",
-        },
-      ],
-    },
-  };
 }

@@ -1,7 +1,7 @@
 import UserButton from "@/components/Sidebar/UserButton";
 import LinksDocuments from "@/components/Sidebar/LinksDoc";
 import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query";
-import { DocumentType } from "@/types/db";
+import { DocumentType } from "../../types/db";
 import Search from "@/components/Sidebar/Search";
 import SidebarMenuItem from "@/components/Sidebar/SidebarMenuItem";
 import Setting from "@/components/Sidebar/Setting";

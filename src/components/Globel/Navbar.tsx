@@ -1,10 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-import React from "react"
+import React, { useState, useEffect } from "react"
+import { loginService } from "@/service/LoginService"
+import { User } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Blog", href: "/blog" },
@@ -17,12 +28,80 @@ const navigation = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
 
-  React.useEffect(() => {
+  // 检查用户登录状态
+  useEffect(() => {
     setMounted(true)
+    // 获取当前用户
+    const currentUser = loginService.getCurrentUser()
+    setUser(currentUser)
+
+    // 使用 Firebase auth 监听认证状态变化
+    const unsubscribe = auth.onAuthStateChanged((authUser: User | null) => {
+      setUser(authUser)
+    })
+
+    return () => {
+      // 清理监听器
+      unsubscribe()
+    }
   }, [])
+
+  // 处理登出
+  const handleSignOut = async () => {
+    try {
+      await loginService.signOut()
+    } catch (error) {
+      console.error("Sign out failed:", error)
+    }
+  }
+
+  // 用户未登录显示登录按钮，已登录显示用户头像和下拉菜单
+  const renderAuthButton = () => {
+    if (!mounted) return null
+
+    if (user) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={user.photoURL || ""} alt={user.displayName || "User"} />
+                <AvatarFallback>
+                  {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="flex items-center justify-start gap-2 p-2">
+              <div className="flex flex-col space-y-1 leading-none">
+                {user.displayName && <p className="font-medium">{user.displayName}</p>}
+                {user.email && <p className="text-sm text-muted-foreground">{user.email}</p>}
+              </div>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/account">账户设置</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
+              退出登录
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+
+    return (
+      <Button variant="default" onClick={() => router.push("/login")}>
+        登录
+      </Button>
+    )
+  }
 
   return (
     <div className="fixed top-0 z-50 w-full border-b border-border bg-background">
@@ -30,7 +109,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {/* Logo */}
           <Button variant="link" asChild className="p-0 text-xl font-bold">
-            <Link href="/">BetaLyr's Programming Guides</Link>
+            <Link href="/">BetaLyrGD</Link>
           </Button>
 
           {/* 导航链接 */}
@@ -92,6 +171,9 @@ export function Navbar() {
               </svg>
             </a>
           </Button>
+
+          {/* 登录按钮/用户头像 */}
+          {renderAuthButton()}
         </div>
       </div>
     </div>
