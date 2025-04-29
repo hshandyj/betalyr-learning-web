@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BubbleMenu, Editor } from "@tiptap/react";
 import DropdownStyle from "../components/DropdownStyle";
 import DropdownNode from "../components/DropdownNode";
@@ -13,6 +13,13 @@ import DropdownLinkInput from "../components/DropdownLinkInput";
 
 const MenuBar = ({ editor }: { editor: Editor | null }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainer(containerRef.current);
+    }
+  }, []);
 
   if (!editor) return null;
   // radix-dropdown-menu-content-transform-origin
@@ -62,16 +69,19 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
       >
         <div ref={containerRef} className="cursor-auto z-10 w-fit relative">
           <div className="flex">
-            <DropdownNode container={containerRef.current} editor={editor} />
+            {container && (
+              <DropdownNode container={container} editor={editor} />
+            )}
             <div className="bg-accent w-[1px] shrink-0" />
-            <DropdownLinkInput
-              container={containerRef.current}
-              editor={editor}
-            />
+            {container && (
+              <DropdownLinkInput container={container} editor={editor} />
+            )}
 
             <div className="bg-accent w-[1px] shrink-0" />
             <Marks editor={editor} />
-            <DropdownStyle container={containerRef.current} editor={editor} />
+            {container && (
+              <DropdownStyle container={container} editor={editor} />
+            )}
           </div>
         </div>
       </BubbleMenu>
