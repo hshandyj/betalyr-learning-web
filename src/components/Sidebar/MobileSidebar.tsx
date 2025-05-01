@@ -4,7 +4,6 @@ import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query";
 import { DocumentType } from "../../types/db";
 import Search from "@/components/Sidebar/Search";
 import SidebarMenuItem from "@/components/Sidebar/SidebarMenuItem";
-import Setting from "@/components/Sidebar/Setting";
 import { cn } from "@/lib/utils";
 
 interface MobileSidebarProps {
@@ -50,19 +49,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 <SidebarMenuItem isMobile iconName="Search" text="Search" />
               </div>
             </Search>
-
-            <Setting>
-              <div>
-                <SidebarMenuItem isMobile iconName="Gear" text="Setting" />
-              </div>
-            </Setting>
-
-            <SidebarMenuItem
-              isMobile
-              onClick={addDoc}
-              iconName="PlusCircle"
-              text="New page"
-            />
           </div>
 
           <LinksDocuments

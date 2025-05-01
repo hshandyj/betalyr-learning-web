@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import { Editor, Range } from "@tiptap/core";
+import Image from "next/image";
 
 interface Command {
   editor: Editor;
@@ -8,8 +9,7 @@ interface Command {
 
 function createElementNextImage(image: string, alt: string, sizes: number) {
   return createElement(
-    // @ts-expect-error
-    require.resolve("next/image").default,
+    Image,
     {
       src: `/images/commands/${image}`,
       alt,

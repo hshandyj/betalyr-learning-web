@@ -22,7 +22,7 @@ const useDocs = () => {
     queryFn: async () => {
       try {
         // 使用虚拟用户ID获取文档列表
-        return await getUserDocs(VirtualUserManager.getVirtualUserId() || "");
+        return await getUserDocs();
       } catch (error) {
         console.error("获取文档列表失败:", error);
         return [];

@@ -1,14 +1,14 @@
 "use client";
 
 import { toastError } from "@/hooks/use-toast";
-import { UpdateTitlePayload } from "@/lib/validators/Documents";
 import { useSaving } from "@/store/use-saving";
 import { useTitle } from "@/store/use-title";
 import { useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, startTransition, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { updateDoc } from "@/service/notionEditorService";
 
 interface TitleProps {
   currentTitle: string;
@@ -23,9 +23,9 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
   const updateTitle = async (value: string) => {
     try {
       setIsSaving(true);
-      const payload: UpdateTitlePayload = { title: value, id };
-
-      await axios.patch(`/api/documents/title/${id}`, payload);
+      
+      // 使用notionEditorService中的updateDoc函数更新标题
+      await updateDoc(id, { title: value });
 
       startTransition(() => {
         // Force a cache invalidation.
@@ -36,15 +36,15 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
       if (error instanceof AxiosError) {
         if (error.response?.status === 422) {
           toastError({
-            title: "Invalid payload axios.",
-            axiosPayloadDesc: "Please provide id and editorJson",
+            title: "无效的请求数据",
+            axiosPayloadDesc: "请提供正确的ID和标题",
             error,
           });
           return;
         }
       }
 
-      toastError({ error, title: "Failed update title" });
+      toastError({ error, title: "更新标题失败" });
     } finally {
       startTransition(() => {
         setIsSaving(false);
@@ -71,7 +71,22 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
 
   useEffect(() => {
     setHydrated(true);
-  }, [hydrated]);
+  }, []);
+
+  // 添加键盘事件处理函数，响应Ctrl+S保存
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (title !== currentTitle) {
+          updateTitle(title);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [title, currentTitle]);
 
   return (
     <div className="text-4xl font-bold relative h-20 flex flex-col justify-center w-full">

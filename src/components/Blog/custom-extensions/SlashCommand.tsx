@@ -24,6 +24,7 @@ interface CommandItemProps {
   description: string;
   icon: ReactNode;
   tooltipSrc: string;
+  command: (props: { editor: Editor; range: Range }) => void;
 }
 
 interface Command {
@@ -201,9 +202,18 @@ const renderItems = () => {
   let popup: any | null = null;
 
   return {
-    onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+    onStart: (props: { editor: Editor; clientRect: DOMRect; query?: string }) => {
       component = new ReactRenderer(CommandList, {
-        props,
+        props: {
+          ...props,
+          items: getSuggestionItems({ query: props.query || '' }),
+          command: (item: any) => {
+            if (item) {
+              item.command(props);
+              popup?.[0].hide();
+            }
+          }
+        },
         editor: props.editor,
       });
 
@@ -218,8 +228,17 @@ const renderItems = () => {
         placement: "bottom-start",
       });
     },
-    onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
-      component?.updateProps(props);
+    onUpdate: (props: { editor: Editor; clientRect: DOMRect; query?: string }) => {
+      component?.updateProps({
+        ...props,
+        items: getSuggestionItems({ query: props.query || '' }),
+        command: (item: any) => {
+          if (item) {
+            item.command(props);
+            popup?.[0].hide();
+          }
+        }
+      });
 
       popup &&
         popup[0].setProps({

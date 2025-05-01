@@ -3,7 +3,6 @@ import SidebarMenuItem from "./SidebarMenuItem";
 import UserButton from "./UserButton";
 
 import Search from "./Search";
-import Setting from "./Setting";
 import { DocumentType } from "@/types/db";
 import { UseMutateFunction, UseQueryResult } from "@tanstack/react-query";
 
@@ -26,18 +25,6 @@ const Sidebar: React.FC<Sidebar> = ({ toggleSidebar, addDoc, query }) => {
               <SidebarMenuItem iconName="Search" text="Search" />
             </div>
           </Search>
-
-          <Setting>
-            <div>
-              <SidebarMenuItem iconName="Gear" text="Setting" />
-            </div>
-          </Setting>
-
-          <SidebarMenuItem
-            onClick={addDoc}
-            iconName="PlusCircle"
-            text="New page"
-          />
         </div>
         <LinksDoc
           addDoc={addDoc}

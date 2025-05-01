@@ -49,9 +49,9 @@ export async function createEmptyDoc(): Promise<Document | null> {
  * @param userId 用户ID
  * @returns Document结构的文档列表
  */
-export async function getUserDocs(userId: string): Promise<DocumentList[]> {
+export async function getUserDocs(): Promise<DocumentList[]> {
   try {
-    const response = await api.get(`${API_BASE_URL}/documents/user/${userId}`);
+    const response = await api.get(`${API_BASE_URL}/documents/user`);
     return response.data as DocumentList[];
   } catch (error) {
     console.error("Error fetching user documents:", error);
@@ -67,7 +67,7 @@ export async function getUserDocs(userId: string): Promise<DocumentList[]> {
  */
 export async function updateDoc(documentId: string, content: Partial<Document>): Promise<Document> {
   try {
-    const response = await api.patch(`${API_BASE_URL}/documents/${documentId}`, content);
+    const response = await api.put(`${API_BASE_URL}/documents/${documentId}`, content);
     return response.data as Document;
   } catch (error) {
     console.error("Error updating document:", error);
@@ -86,6 +86,21 @@ export async function publishDoc(documentId: string): Promise<Document> {
     return response.data as Document;
   } catch (error) {
     console.error("Error publishing document:", error);
+    throw error;
+  }
+}
+
+/**
+ * 删除文档
+ * @param documentId 文档ID
+ * @returns 删除结果
+ */
+export async function deleteDoc(documentId: string):Promise<Boolean | null>{
+  try{
+    const response = await api.delete(`${API_BASE_URL}/documents/deleteDoc/${documentId}`);
+    return response.data as Boolean;
+  } catch(error){
+    console.error("Error deleting document:", error);
     throw error;
   }
 }
