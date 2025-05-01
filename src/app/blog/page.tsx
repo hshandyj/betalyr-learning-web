@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
-import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
+import { createEmptyDoc, findDoc, getDoc } from "@/service/notionEditorService";
 
 export default function BlogEntryPage() {
   const router = useRouter();
@@ -28,6 +28,8 @@ export default function BlogEntryPage() {
       if (lastDocumentId) {
         // 验证文档是否存在
         const docExists = await findDoc(lastDocumentId);
+        //const documentData = await getDoc(lastDocumentId);
+        //console.log("documentData",documentData);
         if (docExists) {
           router.push(`/blog/edit?id=${lastDocumentId}`);
           return;
@@ -54,6 +56,17 @@ export default function BlogEntryPage() {
     }
   };
 
+  const getnewdoc = async () => {
+    // 如果没有上次编辑的文档ID或文档不存在，创建新文档
+    const newDoc = await createEmptyDoc();
+      
+    if (!newDoc || !newDoc.id) {
+      throw new Error("创建文档失败");
+    }
+    
+    // 保存新文档ID到localStorage
+    localStorage.setItem(LOCAL_LAST_DOCUMENT_KEY, newDoc.id);
+  };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background">
       <div className="text-center space-y-8 p-8 max-w-md">
@@ -63,7 +76,14 @@ export default function BlogEntryPage() {
             ? "点击下方按钮继续编辑上次的文档" 
             : "欢迎使用博客编辑器，点击下方按钮创建新文档"}
         </p>
-        
+        <Button 
+          size="lg" 
+          onClick={getnewdoc} 
+          disabled={isLoading}
+          className="w-full"
+        >
+          创建新文档
+        </Button>
         <Button 
           size="lg" 
           onClick={enterEditor} 

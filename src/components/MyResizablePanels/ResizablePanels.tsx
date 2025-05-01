@@ -1,35 +1,32 @@
 "use client";
 
-import axios from "axios";
 import Sidebar from "@/components/Sidebar";
 import MobileSidebar from "@/components/Sidebar/MobileSidebar";
 import { cn } from "@/lib/utils";
 import { toast, toastError } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { DocumentType } from "../../types/db";
 import { useShowMobileSidebar } from "@/hooks/use-show-mobile-sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
+import { getUserDocs, createEmptyDoc } from "@/service/notionEditorService";
 import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
 import PanelGroup from "./PanelGroup";
 import PanelSidebar from "./PanelSidebar";
 import PanelResizeHandler from "./PanelResizeHandler";
-import { getApiUrl } from "@/config/getEnvConfig";
-
-// API端点
-const API_BASE_URL = getApiUrl();
-
-interface Data {
-  data: DocumentType[] | undefined;
-}
+import { VirtualUserManager } from "@/lib/virtualUser";
 
 const useDocs = () => {
   return useQuery({
-    staleTime: 10 * (60 * 1000), // 10 mins
+    staleTime: 10 * (60 * 1000), // 10分钟内不重新请求
     queryKey: ["docs"],
+    // 实现getUserDocs方法获取文档列表
     queryFn: async () => {
-      const { data }: Data = await axios.get(`${API_BASE_URL}/documents`);
-      return data;
+      try {
+        // 使用虚拟用户ID获取文档列表
+        return await getUserDocs(VirtualUserManager.getVirtualUserId() || "");
+      } catch (error) {
+        console.error("获取文档列表失败:", error);
+        return [];
+      }
     },
   });
 };
@@ -42,30 +39,36 @@ export default function ReactResizablePanels({
   right: React.ReactNode;
 }) {
   const { showMobileSidebar, toggleMobileSidebar } = useShowMobileSidebar();
-
   const router = useRouter();
-
   const query = useDocs();
   const queryClient = useQueryClient();
 
+  // 使用createEmptyDoc方法创建新文档
   const { mutate: addDoc } = useMutation({
     mutationFn: async () => {
-      const { data: newDoc }: { data: string } = await axios.post(
-        `${API_BASE_URL}/untitled`
-      );
-
-      return newDoc;
+      try {
+        const newDoc = await createEmptyDoc();
+        if (!newDoc) {
+          throw new Error("创建文档失败");
+        }
+        return newDoc.id; // 返回新文档的ID
+      } catch (error) {
+        console.error("创建文档时出错:", error);
+        throw error;
+      }
     },
     onError: (error: any) => {
-      return toastError({ error, title: "Failed make a new document" });
+      return toastError({ error, title: "创建新文档失败" });
     },
-    onSuccess: (newDoc) => {
+    onSuccess: (newDocId) => {
+      // 使用缓存失效方法
       queryClient.invalidateQueries({ queryKey: ["docs"] });
-
-      router.push("/" + newDoc);
-
+      
+      // 使用router进行导航
+      router.push(`/blog/edit?id=${newDocId}`);
+      
       return toast({
-        title: "Successfully added the doc",
+        title: "文档创建成功",
         variant: "default",
       });
     },
@@ -74,8 +77,12 @@ export default function ReactResizablePanels({
   const showSidebar = useShowSidebarContext((s) => s.showSidebar);
   const toggleSidebar = useShowSidebarContext((s) => s.toggleSidebar);
 
+  // 处理布局变化
   const onLayout = (sizes: number) => {
-    document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
+    if (typeof window !== 'undefined') {
+      // 使用localStorage存储布局，避免cookie引起的渲染问题
+      localStorage.setItem("react-resizable-panels:layout", JSON.stringify(sizes));
+    }
   };
 
   return (

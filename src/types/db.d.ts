@@ -22,14 +22,10 @@ export interface Document {
 export interface DocumentList {
   id: string;
   title: string;
-}
-
-export interface EmptyDocument {
-  id: string;
-  ownerId: string;
-  title: string;
-  createdAt: Date | string;
-  updatedAt: Date | string;
+  iconImage?: {
+    url: string;
+    timeStamp: number;
+  } | null;
 }
 
 export type DocumentType = Pick<Document, "title" | "id" | "iconImage">;

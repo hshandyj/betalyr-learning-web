@@ -24,7 +24,9 @@ export const createShowSidebarStore = (
     toggleSidebar: () =>
       set((state) => {
         const showSidebar = !state.showSidebar;
-        document.cookie = `showSidebar:isShow=${JSON.stringify(showSidebar)}`;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem("showSidebar:isShow", JSON.stringify(showSidebar));
+        }
         return { showSidebar };
       }),
   }));
@@ -38,7 +40,7 @@ export function ShowsidebarProvider({
   children,
   ...props
 }: ShowsidebarProviderProps) {
-  const storeRef = useRef<ShowSidebarStore>();
+  const storeRef = useRef<ShowSidebarStore | null>(null);
   if (!storeRef.current) {
     storeRef.current = createShowSidebarStore(props);
   }

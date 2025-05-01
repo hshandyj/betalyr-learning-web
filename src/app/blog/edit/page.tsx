@@ -10,11 +10,11 @@ import IconImage from "@/components/Main/IconImage";
 import Editor from "@/components/Blog/editor";
 import Title from "@/components/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SaveDocumentScript from "@/service/saveLocalService";
 import { useEffect, useState } from "react";
 import { Document } from "@/types/db";
+import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
 
-const Page: React.FC = () => {
+export default function BlogEditPage() {
   const searchParams = useSearchParams();
   const documentIdParam = searchParams.get('id');
   const [doc, setDoc] = useState<Document | null>(null);
@@ -35,6 +35,7 @@ const Page: React.FC = () => {
           setError(true);
         } else {
           setDoc(documentData);
+          localStorage.setItem(LOCAL_LAST_DOCUMENT_KEY, documentData.id);
         }
       } catch (err) {
         console.error("获取文档失败:", err);
@@ -62,9 +63,6 @@ const Page: React.FC = () => {
   return (
     <>
       <Header doc={doc} />
-      
-      <SaveDocumentScript documentId={documentId} />
-
       <ScrollArea className="h-[calc(100vh_-_48px)]" type="always">
         <main className="flex flex-col h-[inherit]">
           {coverImage && <CoverImage coverImage={coverImage} id={documentId} />}
@@ -104,5 +102,3 @@ const Page: React.FC = () => {
     </>
   );
 };
-
-export default Page;

@@ -75,6 +75,7 @@ export function formatTimeToNow(date: Date): string {
 }
 
 export function isValidObjectID(str: string) {
-  const hexRegex = /^[0-9a-fA-F]{24}$/;
-  return hexRegex.test(str);
+  // UUID格式验证，匹配 8-4-4-4-12 格式的UUID
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
 }

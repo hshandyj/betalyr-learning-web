@@ -45,14 +45,14 @@ export default function Links({
 
   const { title } = useTitle();
 
-  const currentDoc = params.documentId;
+  const currentDocId = Array.isArray(params.id) ? params.id[0] : params.id || '';
 
   const { mutate } = useMutation({
     mutationFn: async ({ id, callback }: MutationProps) => {
       if (callback) callback();
 
       const payload: DeleteDocumentPayload = {
-        currentDoc,
+        currentDoc: currentDocId,
         id,
       };
 
@@ -90,12 +90,12 @@ export default function Links({
     },
   });
 
-  const handleClick = (e: MouseEvent<HTMLElement>, link: string) => {
+  const handleClick = (e: MouseEvent<HTMLElement>, docId: string) => {
     if (isMobile) {
       e.preventDefault();
 
       if (toggle) toggle();
-      setTimeout(() => router.push(`/${link}`), 200);
+      setTimeout(() => router.push(`/blog/edit?id=${docId}`), 200);
     }
   };
 
@@ -103,18 +103,18 @@ export default function Links({
     <>
       {docs.map((doc) => {
         const linkTitle =
-          (currentDoc == doc.id ? title : doc.title) || "Untitled";
+          (currentDocId === doc.id ? title : doc.title) || "Untitled";
 
         return (
           <li key={doc.id}>
             <Link
               tabIndex={0}
-              href={`/${doc.id}`}
+              href={`/blog/edit?id=${doc.id}`}
               onClick={(e) => handleClick(e, doc.id)}
               className={cn(
                 "flex hover:bg-accent w-full items-center px-2 py-[2px] cursor-pointer rounded-sm transition-colors duration-200 overflow-x-hidden focus:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                currentDoc == doc.id && size != "medium" && "bg-accent",
-                size == "medium" && "px-4 py-3 rounded-none",
+                currentDocId === doc.id && size !== "medium" && "bg-accent",
+                size === "medium" && "px-4 py-3 rounded-none",
                 isMobile && "px-1 py-2"
               )}
             >
