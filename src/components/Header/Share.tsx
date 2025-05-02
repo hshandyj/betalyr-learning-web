@@ -12,47 +12,68 @@ import { buttonVariants } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Share1Icon } from "@radix-ui/react-icons";
-import { publishDoc } from "@/service/notionEditorService";
+import { publishDoc, unpublishDoc } from "@/service/notionEditorService";
 import { toastError } from "@/hooks/use-toast";
 import { toast } from "sonner";
 
 interface ShareProps {
   isShare?: boolean;
+  isPublic?: boolean;
 }
 
-const Share: React.FC<ShareProps> = ({ isShare }) => {
+const Share: React.FC<ShareProps> = ({ isShare, isPublic }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const documentId = searchParams.get('id');
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const toggle = () => setIsOpen(!isOpen);
 
   if (isShare) return null;
 
-  const handlePublish = async () => {
+  const handlePublishToggle = async () => {
     if (!documentId) {
       toast.error("无法获取文档ID");
       return;
     }
     
     try {
-      setIsPublishing(true);
-      // 发布文档
-      await publishDoc(documentId);
+      setIsProcessing(true);
+      let success = false;
       
-      // 关闭下拉菜单
-      setIsOpen(false);
+      if (isPublic) {
+        // 取消发布文档
+        success = await unpublishDoc(documentId);
+        if (success) {
+          toast.success("文档已取消发布");
+        }
+      } else {
+        // 发布文档
+        success = await publishDoc(documentId);
+        if (success) {
+          toast.success("文档已发布成功");
+        }
+      }
       
-      // 刷新页面以反映新的状态
-      router.refresh();
-      
-      toast.success("文档已发布成功");
+      // 只有操作成功才关闭下拉菜单
+      if (success) {
+        setIsOpen(false);
+        
+        // 确保页面刷新以反映新的状态
+        router.refresh();
+        
+        // 为确保状态更新，可以考虑重载页面
+        // 注意：在生产环境中，可能需要更优雅的方式来更新状态
+        window.location.reload();
+      }
     } catch (error) {
-      toastError({ error, title: "发布文档失败" });
+      toastError({ 
+        error, 
+        title: isPublic ? "取消发布文档失败" : "发布文档失败" 
+      });
     } finally {
-      setIsPublishing(false);
+      setIsProcessing(false);
     }
   };
 
@@ -67,12 +88,17 @@ const Share: React.FC<ShareProps> = ({ isShare }) => {
       <DropdownMenuContent align="end" sideOffset={15}>
         <DropdownMenuItem 
           className="cursor-pointer"
-          onClick={handlePublish}
-          disabled={isPublishing}
+          onClick={handlePublishToggle}
+          disabled={isProcessing}
         >
           <div className="flex gap-2 items-center">
             <Share1Icon className="w-4 h-4" />
-            <span>{isPublishing ? "发布中..." : "发布文章"}</span>
+            <span>
+              {isProcessing 
+                ? (isPublic ? "取消发布中..." : "发布中...") 
+                : (isPublic ? "取消发布文章" : "发布文章")
+              }
+            </span>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>

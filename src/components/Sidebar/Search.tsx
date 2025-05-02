@@ -1,10 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { Icons } from "@/components/Icons";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Links from "@/components/Sidebar/Links";
 import { DocumentType } from "../../types/db";
+import { VisuallyHidden } from "@/components/Sidebar/visually-hidden";
 
 interface SearchProps {
   docs: DocumentType[] | undefined;
@@ -35,6 +36,9 @@ const Search: React.FC<SearchProps> = ({ docs = [], children }) => {
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="w-[calc(100%_-_100px)] max-w-[750px] mx-auto">
+        <VisuallyHidden>
+          <DialogTitle>搜索文档</DialogTitle>
+        </VisuallyHidden>
         <div className="bg-background h-[calc(100vh_-_6rem)] md:h-screen max-h-[44rem] rounded-2xl overflow-hidden">
           <div className="relative h-12">
             <Icons.Search className="h-6 w-6 p-1 absolute z-10 top-[50%] translate-y-[-50%] left-4" />
@@ -42,7 +46,7 @@ const Search: React.FC<SearchProps> = ({ docs = [], children }) => {
               placeholder="Search"
               value={search}
               onChange={onChange}
-              className="w-full py-4 pr-4 pl-[52px] rounded-t-2xl rounded-b-none absolute z-0 focus-visible:ring-0 h-12 text-base"
+              className="w-full py-4 pr-4 pl-[52px] rounded-2xl absolute z-0 focus-visible:ring-0 h-12 text-base"
             />
           </div>
           <ScrollArea

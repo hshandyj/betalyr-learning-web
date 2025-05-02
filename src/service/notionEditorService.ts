@@ -6,7 +6,7 @@ const API_BASE_URL = getApiUrl();
 export async function findDoc(documentId: string): Promise<Boolean | null> {
   try {
     const response = await api.get(`${API_BASE_URL}/documents/findDoc/${documentId}`);
-    return response.data as Boolean;
+    return response.status === 200 || response.status === 201;
   } catch (error) {
     console.error("Error fetching document:", error);
     return null;
@@ -65,10 +65,10 @@ export async function getUserDocs(): Promise<DocumentList[]> {
  * @param content 文档内容
  * @returns 更新后的Document结构文档
  */
-export async function updateDoc(documentId: string, content: Partial<Document>): Promise<Document> {
+export async function updateDoc(documentId: string, content: Partial<Document>): Promise<boolean> {
   try {
     const response = await api.put(`${API_BASE_URL}/documents/${documentId}`, content);
-    return response.data as Document;
+    return response.status === 200 || response.status === 201;
   } catch (error) {
     console.error("Error updating document:", error);
     throw error;
@@ -78,14 +78,29 @@ export async function updateDoc(documentId: string, content: Partial<Document>):
 /**
  * 发布文档（设置为公开）
  * @param documentId 文档ID
- * @returns 更新后的Document结构文档
+ * @returns 是否成功发布
  */
-export async function publishDoc(documentId: string): Promise<Document> {
+export async function publishDoc(documentId: string): Promise<boolean> {
   try {
     const response = await api.patch(`${API_BASE_URL}/documents/${documentId}/publish`);
-    return response.data as Document;
+    return response.status === 200 || response.status === 201;
   } catch (error) {
     console.error("Error publishing document:", error);
+    throw error;
+  }
+}
+
+/**
+ * 取消发布文档
+ * @param documentId 文档ID
+ * @returns 是否成功取消发布
+ */
+export async function unpublishDoc(documentId: string): Promise<boolean> {
+  try {
+    const response = await api.patch(`${API_BASE_URL}/documents/${documentId}/unpublish`);
+    return response.status === 200 || response.status === 201;
+  } catch (error) {
+    console.error("Error unpublishing document:", error);
     throw error;
   }
 }
@@ -98,7 +113,7 @@ export async function publishDoc(documentId: string): Promise<Document> {
 export async function deleteDoc(documentId: string):Promise<Boolean | null>{
   try{
     const response = await api.delete(`${API_BASE_URL}/documents/deleteDoc/${documentId}`);
-    return response.data as Boolean;
+    return response.status === 200 || response.status === 201;
   } catch(error){
     console.error("Error deleting document:", error);
     throw error;

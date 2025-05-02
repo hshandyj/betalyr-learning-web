@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "../Icons";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import axios, { AxiosError } from "axios";
 import { toast, toastError } from "@/hooks/use-toast";
-import { CoverImagePayload } from "@/lib/validators/route";
+import { updateDoc } from "@/service/notionEditorService";
+import { getApiUrl } from "@/config/getEnvConfig";
 
 interface CoverImageBtnProps {
   id: string;
@@ -29,33 +29,23 @@ const CoverImgUploadBtn: React.FC<CoverImageBtnProps> = ({ id }) => {
       try {
         setIsLoading(true);
 
-        const payload: CoverImagePayload = {
-          id,
-          coverImageUrl: result.info.secure_url,
-        };
-
-        await axios.patch(`/api/images/${id}`, payload);
+        // 使用updateDoc直接更新文档内容
+        await updateDoc(id, {
+          coverImage: {
+            url: result.info.secure_url,
+            timeStamp: Date.now(),
+          },
+        });
 
         startTransition(() => {
           router.refresh();
           toast({
-            title: "Successfully added the cover image",
+            title: "成功添加封面图片",
             variant: "default",
           });
         });
       } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 422) {
-            toastError({
-              title: "Invalid payload axios.",
-              axiosPayloadDesc: "Please provide coverImageUrl and id",
-              error,
-            });
-            return;
-          }
-        }
-
-        toastError({ error, title: "Failed upload cover image" });
+        toastError({ error, title: "上传封面图片失败" });
       } finally {
         setIsLoading(false);
       }
@@ -77,7 +67,7 @@ const CoverImgUploadBtn: React.FC<CoverImageBtnProps> = ({ id }) => {
         croppingCoordinatesMode: "custom",
       }}
       onUpload={onUpload}
-      signatureEndpoint="/api/sign-cloudinary-params"
+      signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
     >
       {({ open }) => {
         return (

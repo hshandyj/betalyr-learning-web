@@ -8,11 +8,11 @@ import { CldUploadWidget } from "next-cloudinary";
 import { Button } from "../ui/button";
 import { Icons } from "../Icons";
 import { useState, useTransition } from "react";
-import axios, { AxiosError } from "axios";
-import { IconImagePayload } from "@/lib/validators/route";
 import { toast, toastError } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { updateDoc } from "@/service/notionEditorService";
+import { getApiUrl } from "@/config/getEnvConfig";
 
 interface IconImageBtnProps {
   id: string;
@@ -30,34 +30,24 @@ const IconImgUploadBtn: React.FC<IconImageBtnProps> = ({ id }) => {
       try {
         setIsLoading(true);
 
-        const payload: IconImagePayload = {
-          id,
-          iconImageUrl: result.info.secure_url,
-        };
-
-        await axios.patch(`/api/images/${id}`, payload);
+        // 使用updateDoc直接更新文档内容
+        await updateDoc(id, {
+          iconImage: {
+            url: result.info.secure_url,
+            timeStamp: Date.now(),
+          },
+        });
 
         startTransition(() => {
           queryClient.invalidateQueries({ queryKey: ["docs"] });
           router.refresh();
           toast({
-            title: "Successfully added the icon image",
+            title: "成功添加图标",
             variant: "default",
           });
         });
       } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 422) {
-            toastError({
-              title: "Invalid payload axios.",
-              axiosPayloadDesc: "Please provide iconImageUrl and id",
-              error,
-            });
-            return;
-          }
-        }
-
-        toastError({ error, title: "Failed upload icon image" });
+        toastError({ error, title: "上传图标失败" });
       } finally {
         setIsLoading(false);
       }
@@ -79,14 +69,14 @@ const IconImgUploadBtn: React.FC<IconImageBtnProps> = ({ id }) => {
         croppingCoordinatesMode: "custom",
       }}
       onUpload={onUpload}
-      signatureEndpoint={"/api/sign-cloudinary-params"}
+      signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
     >
       {({ open }) => {
         return (
           <Button
             onClick={() => open?.()}
             type="button"
-            className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2 "
+            className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
             variant={"ghost"}
             size={"sm"}
             disabled={isLoading}

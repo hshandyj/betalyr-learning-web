@@ -25,11 +25,14 @@ const Header: React.FC<HeaderProps> = ({ doc, isShare }) => {
         <div className="flex-1 flex items-center justify-between text-sm">
           <div className="flex gap-3 items-center truncate">
             <IconTitle doc={doc} />
+            {doc.isPublic && (
+              <div className="w-2 h-2 rounded-full bg-green-500" title="已发布" />
+            )}
             <Saving />
           </div>
           <div className="flex gap-2">
             <Updated updatedAt={doc.updatedAt} />
-            <Share isShare={isShare} />
+            <Share isShare={isShare} isPublic={doc.isPublic} />
           </div>
         </div>
       )}
