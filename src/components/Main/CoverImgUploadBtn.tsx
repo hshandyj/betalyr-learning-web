@@ -66,7 +66,15 @@ const CoverImgUploadBtn: React.FC<CoverImageBtnProps> = ({ id }) => {
         croppingShowDimensions: true,
         croppingCoordinatesMode: "custom",
       }}
-      onUpload={onUpload}
+      onSuccess={onUpload}
+      onError={(error) => {
+        console.error("Cloudinary upload error:", error);
+        toast({
+          title: "上传组件加载失败",
+          description: "请刷新页面或稍后再试",
+          variant: "destructive",
+        });
+      }}
       signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
     >
       {({ open }) => {

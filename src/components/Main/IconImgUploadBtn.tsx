@@ -68,7 +68,7 @@ const IconImgUploadBtn: React.FC<IconImageBtnProps> = ({ id }) => {
         croppingShowDimensions: true,
         croppingCoordinatesMode: "custom",
       }}
-      onUpload={onUpload}
+      onSuccess={onUpload}
       signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
     >
       {({ open }) => {
