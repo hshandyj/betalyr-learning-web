@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
+import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
 
 export default function BlogEntryPage() {

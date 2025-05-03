@@ -7,11 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icons } from "@/components/Icons";
-
+import { getApiUrl } from "@/config/getEnvConfig";
 import {
   CLOUDINARY_UPLOAD_PRESET,
   CLOUDINARY_ICON_IMAGE_FOLDER,
-} from "@/config/cloudinary";
+} from "@/config/textConfig";
 
 import { CldUploadWidget } from "next-cloudinary";
 import { cn } from "@/lib/utils";
@@ -58,7 +58,7 @@ const MenuDropdown: React.FC<IconImageProps> = ({
             croppingCoordinatesMode: "custom",
           }}
           onSuccess={onSuccess}
-          signatureEndpoint={"/api/sign-cloudinary-params"}
+          signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
         >
           {({ open }) => {
             return (

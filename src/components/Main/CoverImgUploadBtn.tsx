@@ -3,7 +3,7 @@
 import {
   CLOUDINARY_COVER_IMAGE_FOLDER,
   CLOUDINARY_UPLOAD_PRESET,
-} from "@/config/cloudinary";
+} from "@/config/textConfig";
 
 import { CldUploadWidget } from "next-cloudinary";
 import { Button } from "@/components/ui/button";

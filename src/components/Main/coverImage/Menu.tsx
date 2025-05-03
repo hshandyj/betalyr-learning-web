@@ -1,10 +1,11 @@
 import {
   CLOUDINARY_COVER_IMAGE_FOLDER,
   CLOUDINARY_UPLOAD_PRESET,
-} from "@/config/cloudinary";
+} from "@/config/textConfig";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CldUploadWidget } from "next-cloudinary";
+import { getApiUrl } from "@/config/getEnvConfig";
 
 interface MenuProps {
   // eslint-disable-next-line no-unused-vars
@@ -38,7 +39,7 @@ const Menu: React.FC<MenuProps> = ({
           croppingCoordinatesMode: "custom",
         }}
         onSuccess={onSuccess}
-        signatureEndpoint={"/api/sign-cloudinary-params"}
+        signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
       >
         {({ open }) => {
           return (

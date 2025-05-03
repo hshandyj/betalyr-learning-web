@@ -12,7 +12,7 @@ import Title from "@/components/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState } from "react";
 import { Document } from "@/types/db";
-import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
+import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 
 export default function BlogEditPage() {
   const searchParams = useSearchParams();

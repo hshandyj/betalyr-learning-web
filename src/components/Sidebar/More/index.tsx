@@ -6,8 +6,7 @@ import { type MutationProps } from "../Links";
 import { deleteDoc, createEmptyDoc, getUserDocs } from "@/service/notionEditorService";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { VirtualUserManager } from "@/lib/virtualUser";
-import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/getLocalConfig";
+import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 import { toast, toastError } from "@/hooks/use-toast";
 
 import MoreDropDown from "./MoreDropDown";

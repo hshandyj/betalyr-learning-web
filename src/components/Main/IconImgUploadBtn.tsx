@@ -3,7 +3,7 @@
 import {
   CLOUDINARY_ICON_IMAGE_FOLDER,
   CLOUDINARY_UPLOAD_PRESET,
-} from "@/config/cloudinary";
+} from "@/config/textConfig";
 import { CldUploadWidget } from "next-cloudinary";
 import { Button } from "../ui/button";
 import { Icons } from "../Icons";
@@ -74,7 +74,19 @@ const IconImgUploadBtn: React.FC<IconImageBtnProps> = ({ id }) => {
       {({ open }) => {
         return (
           <Button
-            onClick={() => open?.()}
+            onClick={() => {
+              if (typeof open === 'function') {
+                open();
+              } else {
+                console.error("Cloudinary open function is not available");
+                // 可以在这里添加降级处理或用户提示
+                toast({
+                  title: "上传功能暂不可用",
+                  description: "请稍后再试",
+                  variant: "destructive",
+                });
+              }
+            }}
             type="button"
             className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
             variant={"ghost"}
