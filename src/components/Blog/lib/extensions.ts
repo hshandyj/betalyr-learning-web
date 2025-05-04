@@ -69,8 +69,8 @@ export const TiptapExtensions = [
   TaskList.configure({
     HTMLAttributes: {
       class: `not-prose list-none pl-0 m-0 
-              [&>li]:x-[flex,items-center,m-0,h-10]
-              [&>li>div]:x-[flex,m-0]
+              [&>li]:x-[flex,items-center,m-0]
+              [&>li>div]:x-[flex,m-0,flex-1]
               [&>li>label]:x-[h-5,items-center,select-none,m-0,w-[28px],shrink-0,grow-0,basis-[auto]] 
               [&>li_input]:x-[appearance-none,w-5,h-5,cursor-pointer,bg-background,relative,flex,justify-center,items-center]
               [&>li_div_p]:x-[m-0,pl-2]
@@ -83,7 +83,8 @@ export const TiptapExtensions = [
         nested: true,
         taskListTypeName: "taskItem",
         HTMLAttributes: {
-          class: `[&_div_p]:data-[checked=true]:x-[text-primary/50,line-through]
+          class: `flex items-start pt-2
+                  [&_div_p]:data-[checked=true]:x-[text-primary/50,line-through]
                   [&_input]:data-[checked=true]:x-[bg-sky-600,relative]
                   [&_input]:data-[checked=false]:x-[border-2,border-accent-foreground]
                   [&_input]:data-[checked=true]:after:scale-[0.8]`,
@@ -96,6 +97,7 @@ export const TiptapExtensions = [
         "li",
         mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
           "data-checked": HTMLAttributes["data-checked"] ? "true" : "false",
+          "data-type": "taskItem",
         }),
         [
           "label",
@@ -106,10 +108,22 @@ export const TiptapExtensions = [
               checked: node.attrs.checked ? "checked" : null,
             },
           ],
-          ["span"],
         ],
-        ["div", 0],
+        ["div", { class: "flex-1" }, 0],
       ];
+    },
+
+    addKeyboardShortcuts() {
+      return {
+        "Enter": () => {
+          const { editor } = this;
+          if (editor.isActive('taskItem')) {
+            // 防止Enter键导致光标跳到错误的位置
+            return editor.commands.splitListItem('taskItem');
+          }
+          return false;
+        },
+      };
     },
   }),
   Code.configure({

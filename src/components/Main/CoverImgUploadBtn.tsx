@@ -5,7 +5,7 @@ import {
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/config/textConfig";
 
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadButton } from "next-cloudinary";
 import { Button } from "@/components/ui/button";
 import { Icons } from "../Icons";
 import { useState, useTransition } from "react";
@@ -53,46 +53,43 @@ const CoverImgUploadBtn: React.FC<CoverImageBtnProps> = ({ id }) => {
   };
 
   return (
-    <CldUploadWidget
-      uploadPreset={CLOUDINARY_UPLOAD_PRESET}
-      options={{
-        maxFiles: 1,
-        resourceType: "image",
-        folder: CLOUDINARY_COVER_IMAGE_FOLDER,
-        publicId: id,
-        cropping: true,
-        croppingAspectRatio: 3,
-        showSkipCropButton: false,
-        croppingShowDimensions: true,
-        croppingCoordinatesMode: "custom",
-      }}
-      onSuccess={onUpload}
-      onError={(error) => {
-        console.error("Cloudinary upload error:", error);
-        toast({
-          title: "上传组件加载失败",
-          description: "请刷新页面或稍后再试",
-          variant: "destructive",
-        });
-      }}
-      signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
+    <Button
+      type="button"
+      className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
+      variant={"ghost"}
+      size={"sm"}
+      disabled={isLoading}
+      asChild
     >
-      {({ open }) => {
-        return (
-          <Button
-            onClick={() => open?.()}
-            type="button"
-            className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
-            variant={"ghost"}
-            size={"sm"}
-            disabled={isLoading}
-          >
-            <Icons.Image className="h-4 w-4" />
-            <span>Add Cover</span>
-          </Button>
-        );
-      }}
-    </CldUploadWidget>
+      <CldUploadButton
+        uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+        options={{
+          maxFiles: 1,
+          resourceType: "image",
+          folder: CLOUDINARY_COVER_IMAGE_FOLDER,
+          publicId: id,
+          cropping: true,
+          croppingAspectRatio: 3,
+          showSkipCropButton: false,
+          croppingShowDimensions: true,
+          croppingCoordinatesMode: "custom",
+        }}
+        onSuccess={onUpload}
+        onError={(error) => {
+          console.error("Cloudinary upload error:", error);
+          toast({
+            title: "上传组件加载失败",
+            description: "请刷新页面或稍后再试",
+            variant: "destructive",
+          });
+        }}
+        signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
+        className="flex items-center gap-2"
+      >
+        <Icons.Image className="h-4 w-4" />
+        <span>Add Cover</span>
+      </CldUploadButton>
+    </Button>
   );
 };
 

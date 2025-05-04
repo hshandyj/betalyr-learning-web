@@ -42,7 +42,13 @@ export const slashNodes = [
     tooltipSrc: "/images/commands/tooltip-to-do.png",
     icon: createElementNextImage("to-do.png", "to-do list", 46),
     command: ({ editor, range }: Command) => {
-      editor.chain().focus().deleteRange(range).toggleTaskList().run();
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .toggleTaskList()
+        .insertContent(' ')
+        .run();
     },
   },
   {

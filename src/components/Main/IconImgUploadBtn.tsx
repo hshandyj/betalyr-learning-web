@@ -4,7 +4,7 @@ import {
   CLOUDINARY_ICON_IMAGE_FOLDER,
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/config/textConfig";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadButton } from "next-cloudinary";
 import { Button } from "../ui/button";
 import { Icons } from "../Icons";
 import { useState, useTransition } from "react";
@@ -55,50 +55,35 @@ const IconImgUploadBtn: React.FC<IconImageBtnProps> = ({ id }) => {
   };
 
   return (
-    <CldUploadWidget
-      uploadPreset={CLOUDINARY_UPLOAD_PRESET}
-      options={{
-        maxFiles: 1,
-        resourceType: "image",
-        folder: CLOUDINARY_ICON_IMAGE_FOLDER,
-        publicId: id,
-        cropping: true,
-        croppingAspectRatio: 1,
-        showSkipCropButton: false,
-        croppingShowDimensions: true,
-        croppingCoordinatesMode: "custom",
-      }}
-      onSuccess={onUpload}
-      signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
+    <Button
+      type="button"
+      className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
+      variant={"ghost"}
+      size={"sm"}
+      disabled={isLoading}
+      asChild
     >
-      {({ open }) => {
-        return (
-          <Button
-            onClick={() => {
-              if (typeof open === 'function') {
-                open();
-              } else {
-                console.error("Cloudinary open function is not available");
-                // 可以在这里添加降级处理或用户提示
-                toast({
-                  title: "上传功能暂不可用",
-                  description: "请稍后再试",
-                  variant: "destructive",
-                });
-              }
-            }}
-            type="button"
-            className="cursor-pointer text-sm md:!opacity-0 group-hover:!opacity-80 transition-opacity duration-200 px-2 gap-2"
-            variant={"ghost"}
-            size={"sm"}
-            disabled={isLoading}
-          >
-            <Icons.Camera className="h-4 w-4" />
-            <span>Add Icon</span>
-          </Button>
-        );
-      }}
-    </CldUploadWidget>
+      <CldUploadButton
+        uploadPreset={CLOUDINARY_UPLOAD_PRESET}
+        options={{
+          maxFiles: 1,
+          resourceType: "image",
+          folder: CLOUDINARY_ICON_IMAGE_FOLDER,
+          publicId: id,
+          cropping: true,
+          croppingAspectRatio: 1,
+          showSkipCropButton: false,
+          croppingShowDimensions: true,
+          croppingCoordinatesMode: "custom",
+        }}
+        onSuccess={onUpload}
+        signatureEndpoint={`${getApiUrl()}/documents/sign-cloudinary`}
+        className="flex items-center gap-2"
+      >
+        <Icons.Camera className="h-4 w-4" />
+        <span>Add Icon</span>
+      </CldUploadButton>
+    </Button>
   );
 };
 

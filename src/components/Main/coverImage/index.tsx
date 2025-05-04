@@ -1,12 +1,7 @@
 "use client";
 
-import { toastError } from "@/hooks/use-toast";
-import {
-  CoverImagePayload,
-  RemoveCoverImagePayload,
-} from "@/lib/validators/route";
+import { toastError, toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { startTransition, useState } from "react";
 
@@ -15,11 +10,7 @@ import { Document } from "@/types/db";
 import { Icons } from "../../Icons";
 import { cn } from "@/lib/utils";
 import Menu from "./Menu";
-import MenuDialog from "./MenuDialog";
-import { getApiUrl } from "@/config/getEnvConfig";
-
-// API端点
-const API_BASE_URL = getApiUrl();
+import { updateDoc } from "@/service/notionEditorService";
 
 interface CoverImageProps {
   id: string;
@@ -34,38 +25,28 @@ const CoverImage: React.FC<CoverImageProps> = ({ id, coverImage }) => {
 
   const isLoading = isDeleting || isUpdating;
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const toggle = () => setIsOpen(!isOpen);
-
   const onSuccess = async (result: any) => {
     if (result.event == "success") {
       try {
-        if (isOpen) setIsOpen(false);
         setIsUpdating(true);
 
-        const payload: CoverImagePayload = {
-          id,
-          coverImageUrl: result.info.secure_url,
-        };
-
-        await axios.patch(`${API_BASE_URL}/images/${id}`, payload);
+        await updateDoc(id, {
+          coverImage: {
+            url: result.info.secure_url,
+            timeStamp: Date.now(),
+          },
+        });
 
         startTransition(() => {
           queryClient.invalidateQueries({ queryKey: ["docs"] });
           router.refresh();
+          toast({
+            title: "成功更新封面图片",
+            variant: "default",
+          });
         });
       } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 422) {
-            toastError({
-              title: "Invalid payload axios.",
-              axiosPayloadDesc: "Please provide coverImageUrl and id",
-              error,
-            });
-            return;
-          }
-        }
-        toastError({ error, title: "Failed update cover image" });
+        toastError({ error, title: "更新封面图片失败" });
       } finally {
         setIsUpdating(false);
       }
@@ -74,30 +55,22 @@ const CoverImage: React.FC<CoverImageProps> = ({ id, coverImage }) => {
 
   const onDelete = async () => {
     try {
-      if (isOpen) setIsOpen(false);
       setIsDeleting(true);
 
-      const payload: RemoveCoverImagePayload = { id, isCoverImage: true };
-
-      await axios.patch(`${API_BASE_URL}/images/remove/${id}`, payload);
+      await updateDoc(id, {
+        coverImage: null,
+      });
 
       startTransition(() => {
         queryClient.invalidateQueries({ queryKey: ["docs"] });
         router.refresh();
+        toast({
+          title: "成功删除封面图片",
+          variant: "default",
+        });
       });
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.status === 422) {
-          toastError({
-            title: "Invalid payload axios.",
-            axiosPayloadDesc: "Please provide isCoverImage and id",
-            error,
-          });
-          return;
-        }
-      }
-
-      toastError({ error, title: "Failed delete cover image" });
+      toastError({ error, title: "删除封面图片失败" });
     } finally {
       setIsDeleting(false);
     }
@@ -142,14 +115,6 @@ const CoverImage: React.FC<CoverImageProps> = ({ id, coverImage }) => {
             id={id}
           />
         ) : null}
-        <MenuDialog
-          isLoading={isLoading}
-          isOpen={isOpen}
-          onDelete={onDelete}
-          onSuccess={onSuccess}
-          id={id}
-          toggle={toggle}
-        />
       </div>
     </div>
   );
