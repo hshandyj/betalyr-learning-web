@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     // 在生产构建期间忽略 ESLint 错误
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
 };
 
 export default nextConfig;

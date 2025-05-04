@@ -111,6 +111,21 @@
   --sidebar-ring: oklch(0.553 0.013 58.071);
 }
 
+.ProseMirror .is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+.ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
