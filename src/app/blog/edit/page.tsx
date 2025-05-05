@@ -121,5 +121,8 @@ export default function BlogEditPage() {
   );
 }
 
-// 添加导出配置，指示Next.js这个页面是动态的，不要尝试预渲染
+// 添加配置，显式告诉Next.js如何处理这个页面
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';  // 使用边缘运行时
+export const preferredRegion = 'auto';
+export const revalidate = 0;    // 禁用缓存
