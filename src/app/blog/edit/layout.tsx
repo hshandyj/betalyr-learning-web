@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { findDoc } from "@/service/notionEditorService";
 import { isValidObjectID } from "@/lib/utils";
@@ -21,7 +21,8 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+// 创建一个内部组件来处理URL参数和文档验证
+function LayoutContent({ children }: LayoutProps) {
   const searchParams = useSearchParams();
   const documentId = searchParams.get('id');
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -101,6 +102,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </ShowsidebarProvider>
     </QueryClientProvider>
+  );
+}
+
+// 主布局组件，使用Suspense包裹内部组件
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">加载布局...</div>}>
+      <LayoutContent children={children} />
+    </Suspense>
   );
 };
 

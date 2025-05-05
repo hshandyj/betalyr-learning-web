@@ -5,26 +5,33 @@ import CoverImgUploadBtn from "@/components/Main/CoverImgUploadBtn";
 import CoverImage from "@/components/Main/coverImage";
 import IconImgUploadBtn from "@/components/Main/IconImgUploadBtn";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 import IconImage from "@/components/Main/IconImage";
 import Editor from "@/components/Blog/editor";
 import Title from "@/components/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Document } from "@/types/db";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
-import dynamic from "next/dynamic";
 
-// 使用dynamic导入来懒加载使用客户端API的组件
-// 通过设置ssr: false确保该组件只在客户端渲染
-const DocumentEditor = dynamic(() => Promise.resolve(({ documentId }: { documentId: string }) => {
+// 创建一个单独的组件来使用useSearchParams
+function BlogEditContent() {
+  const searchParams = useSearchParams();
+  const documentIdParam = searchParams.get('id');
   const [doc, setDoc] = useState<Document | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchDocument = async () => {
+      if (!documentIdParam) {
+        setError(true);
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const documentData = await getDoc(documentId);
+        const documentData = await getDoc(documentIdParam);
         if (!documentData) {
           setError(true);
         } else {
@@ -40,17 +47,19 @@ const DocumentEditor = dynamic(() => Promise.resolve(({ documentId }: { document
     };
 
     fetchDocument();
-  }, [documentId]);
+  }, [documentIdParam]);
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">加载中...</div>;
   }
   
-  if (error || !doc) {
+  if (error || !doc || !documentIdParam) {
     return <div className="flex items-center justify-center h-screen">文档不存在或无法访问</div>;
   }
 
   const { title, coverImage, iconImage, editorJson } = doc;
+  // 确保documentId存在
+  const documentId = documentIdParam;
 
   return (
     <>
@@ -93,22 +102,13 @@ const DocumentEditor = dynamic(() => Promise.resolve(({ documentId }: { document
       </ScrollArea>
     </>
   );
-}), { ssr: false, loading: () => <div className="flex items-center justify-center h-screen">加载编辑器...</div> });
+}
 
-// 使用dynamic导入来懒加载获取URL参数的组件
-const DocumentIdExtractor = dynamic(() => import("./components/document-id-extractor"), { 
-  ssr: false,
-  loading: () => <div className="flex items-center justify-center h-screen">加载中...</div>
-});
-
-// 主页面组件 - 不包含任何客户端API调用
+// 主页面组件使用Suspense包装内容组件
 export default function BlogEditPage() {
-  return <DocumentIdExtractor fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
-    {(documentId) => {
-      if (!documentId) {
-        return <div className="flex items-center justify-center h-screen">未提供文档ID</div>;
-      }
-      return <DocumentEditor documentId={documentId} />;
-    }}
-  </DocumentIdExtractor>;
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
+      <BlogEditContent />
+    </Suspense>
+  );
 }
