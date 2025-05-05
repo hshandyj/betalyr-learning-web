@@ -41,9 +41,12 @@ export function Navbar() {
     setUser(currentUser)
 
     // 使用 Firebase auth 监听认证状态变化
-    const unsubscribe = auth.onAuthStateChanged((authUser: User | null) => {
-      setUser(authUser)
-    })
+    let unsubscribe = () => {};
+    if (auth) {
+      unsubscribe = auth.onAuthStateChanged((authUser: User | null) => {
+        setUser(authUser)
+      })
+    }
 
     return () => {
       // 清理监听器
