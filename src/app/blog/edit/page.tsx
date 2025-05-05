@@ -14,16 +14,10 @@ import { useEffect, useState, Suspense } from "react";
 import { Document } from "@/types/db";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 
-// 创建一个专门的组件只负责提取搜索参数
-function SearchParamsExtractor({ children }: { children: (id: string | null) => React.ReactNode }) {
+// 创建一个单独的组件来使用useSearchParams
+function BlogEditContent() {
   const searchParams = useSearchParams();
   const documentIdParam = searchParams.get('id');
-  
-  return <>{children(documentIdParam)}</>;
-}
-
-// 博客编辑内容组件，不直接使用useSearchParams
-function BlogEditContent({ documentIdParam }: { documentIdParam: string | null }) {
   const [doc, setDoc] = useState<Document | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<boolean>(false);
@@ -110,19 +104,11 @@ function BlogEditContent({ documentIdParam }: { documentIdParam: string | null }
   );
 }
 
-// 主页面组件，使用Suspense包装SearchParamsExtractor
+// 主页面组件使用Suspense包装内容组件
 export default function BlogEditPage() {
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
-      <SearchParamsExtractor>
-        {(documentIdParam) => <BlogEditContent documentIdParam={documentIdParam} />}
-      </SearchParamsExtractor>
+      <BlogEditContent />
     </Suspense>
   );
 }
-
-// 添加配置，显式告诉Next.js如何处理这个页面
-export const dynamic = 'force-dynamic';
-export const runtime = 'edge';  // 使用边缘运行时
-export const preferredRegion = 'auto';
-export const revalidate = 0;    // 禁用缓存
