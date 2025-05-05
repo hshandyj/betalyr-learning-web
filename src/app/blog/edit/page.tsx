@@ -10,11 +10,12 @@ import IconImage from "@/components/Main/IconImage";
 import Editor from "@/components/Blog/editor";
 import Title from "@/components/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Document } from "@/types/db";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 
-export default function BlogEditPage() {
+// 创建一个单独的组件来使用useSearchParams
+function BlogEditContent() {
   const searchParams = useSearchParams();
   const documentIdParam = searchParams.get('id');
   const [doc, setDoc] = useState<Document | null>(null);
@@ -101,4 +102,13 @@ export default function BlogEditPage() {
       </ScrollArea>
     </>
   );
-};
+}
+
+// 主页面组件使用Suspense包装内容组件
+export default function BlogEditPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
+      <BlogEditContent />
+    </Suspense>
+  );
+}
