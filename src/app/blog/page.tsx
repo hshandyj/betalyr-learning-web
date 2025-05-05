@@ -105,3 +105,5 @@ export default function BlogEntryPage() {
     </div>
   );
 }
+
+export const dynamic = "force-dynamic"
