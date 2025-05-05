@@ -15,21 +15,26 @@ import api from "@/lib/api";
 import { getApiUrl } from "@/config/getEnvConfig";
 import { toast } from "sonner";
 
+// 检查是否在客户端环境
+const isClient = typeof window !== 'undefined';
+
 export class LoginService {
     private static instance: LoginService;
     private currentUser: User | null = null;
     private currentToken: string | null = null;
 
     private constructor() {
-        // 监听认证状态变化
-        auth.onAuthStateChanged((user) => {
-            this.currentUser = user;
-            if (user) {
-                this.updateToken();
-            } else {
-                this.clearToken();
-            }
-        });
+        // 仅在客户端环境下监听认证状态变化
+        if (isClient && auth) {
+            auth.onAuthStateChanged((user: User | null) => {
+                this.currentUser = user;
+                if (user) {
+                    this.updateToken();
+                } else {
+                    this.clearToken();
+                }
+            });
+        }
     }
 
     public static getInstance(): LoginService {
@@ -46,11 +51,15 @@ export class LoginService {
 
     // 检查是否已登录
     public isAuthenticated(): boolean {
+        // 在服务器端渲染时，始终返回false
+        if (!isClient) return false;
         return !!this.currentUser;
     }
 
     // Google 登录
     public async signInWithGoogle(): Promise<User> {
+        if (!isClient || !auth) throw new Error("Cannot sign in on server side");
+        
         try {
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(auth, provider);
@@ -66,6 +75,8 @@ export class LoginService {
 
     // 登出
     public async signOut(): Promise<void> {
+        if (!isClient || !auth) return;
+        
         await signOut(auth);
         this.clearUserFromLocal();
         this.currentToken = null;
@@ -74,15 +85,12 @@ export class LoginService {
 
     // 获取新的 token
     public async getToken(forceRefresh = false): Promise<string | null> {
+        // 在服务器端渲染时，直接返回null
+        if (!isClient || !this.currentUser) return null;
+        
         try {
-            if (!this.currentUser) {
-                return null;
-            }
             const token = await this.currentUser.getIdToken(forceRefresh);
-            // 确保只在浏览器环境下操作 localStorage
-            if (typeof window !== "undefined") {
-                localStorage.setItem("authToken", token);
-            }
+            localStorage.setItem("authToken", token);
             return token;
         } catch (error) {
             console.error("Get token failed:", error);
@@ -92,11 +100,11 @@ export class LoginService {
 
     // 更新存储的 token
     private async updateToken(): Promise<void> {
+        if (!isClient || !auth || !auth.currentUser) return;
+        
         try {
-            this.currentToken = (await auth.currentUser?.getIdToken()) || null;
-            if (auth.currentUser) {
-                this.saveUserToLocal(auth.currentUser);
-            }
+            this.currentToken = (await auth.currentUser.getIdToken()) || null;
+            this.saveUserToLocal(auth.currentUser);
         } catch (error) {
             console.error("Update token failed:", error);
             throw error;
@@ -105,13 +113,15 @@ export class LoginService {
 
     // 清除 token
     private clearToken(): void {
-        if (typeof window !== "undefined") {
+        if (isClient) {
             localStorage.removeItem("authToken");
         }
     }
 
     // 处理 token 过期
     public async handleTokenExpired(): Promise<string | null> {
+        if (!isClient) return null;
+        
         try {
             return await this.getToken(true);
         } catch (error) {
@@ -124,6 +134,8 @@ export class LoginService {
 
     // 处理未授权
     public handleUnauthorized(): void {
+        if (!isClient) return;
+        
         this.clearToken();
         toast.error("Please sign in to create more stories", {
             action: {
@@ -173,6 +185,8 @@ export class LoginService {
         firstName: string,
         lastName: string,
     ): Promise<User> {
+        if (!isClient || !auth) throw new Error("Cannot sign up on server side");
+        
         try {
             const result = await createUserWithEmailAndPassword(
                 auth,
@@ -202,6 +216,8 @@ export class LoginService {
         email: string,
         password: string,
     ): Promise<User> {
+        if (!isClient || !auth) throw new Error("Cannot sign in on server side");
+        
         try {
             const result = await signInWithEmailAndPassword(
                 auth,
@@ -220,6 +236,8 @@ export class LoginService {
 
     // 重置密码
     public async resetPassword(email: string): Promise<void> {
+        if (!isClient || !auth) throw new Error("Cannot reset password on server side");
+        
         try {
             // 直接尝试发送重置密码邮件
             await sendPasswordResetEmail(auth, email);
@@ -239,6 +257,8 @@ export class LoginService {
 
     // Apple 登录
     public async signInWithApple(): Promise<User> {
+        if (!isClient || !auth) throw new Error("Cannot sign in on server side");
+        
         try {
             const provider = new OAuthProvider("apple.com");
             const result = await signInWithPopup(auth, provider);

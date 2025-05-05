@@ -395,3 +395,6 @@ createDream();`}</code>
     </div>
   )
 }
+
+// 确保页面不会在构建时静态生成
+export const dynamic = "force-dynamic";
