@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   /* config options here */
   eslint: {
     // 在生产构建期间忽略 ESLint 错误
@@ -9,7 +9,11 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['res.cloudinary.com'],
   },
-};
+  experimental: {
+    // 暂时禁用缺少Suspense边界的警告
+    missingSuspenseWithCSRBailout: false,
+  },
+} as NextConfig;
 
 export default nextConfig;
 
