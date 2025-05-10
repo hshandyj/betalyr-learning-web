@@ -1,17 +1,17 @@
 "use client"
 import { getDoc } from "@/service/notionEditorService";
-import Header from "@/components/Header";
-import CoverImgUploadBtn from "@/components/Main/CoverImgUploadBtn";
-import CoverImage from "@/components/Main/coverImage";
-import IconImgUploadBtn from "@/components/Main/IconImgUploadBtn";
+import Header from "@/components/Edit/Header";
+import CoverImgUploadBtn from "@/components/Edit/Main/CoverImgUploadBtn";
+import CoverImage from "@/components/Edit/Main/coverImage";
+import IconImgUploadBtn from "@/components/Edit/Main/IconImgUploadBtn";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import IconImage from "@/components/Main/IconImage";
-import Editor from "@/components/Blog/editor";
-import Title from "@/components/Main/Title";
+import IconImage from "@/components/Edit/Main/IconImage";
+import Editor from "@/components/Edit/editor";
+import Title from "@/components/Edit/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useState, Suspense } from "react";
-import { Document } from "@/types/db";
+import { Document } from "@/types/document";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 
 // 创建一个单独的组件来使用useSearchParams
