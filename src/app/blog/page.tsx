@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Loader2, Calendar, User, Eye, ChevronRight, Search, PlusCircle, ChevronLeft } from "lucide-react";
+import { Loader2, Calendar, Eye, ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
 import { getPublishedDocs, PaginatedResponse } from "@/service/getPublickService";
@@ -20,6 +20,14 @@ import { format } from "date-fns";
 export const dynamic = "force-dynamic";
 
 export default function BlogListPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
+      <BlogListContent />
+    </Suspense>
+  );
+}
+
+function BlogListContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentPageParam = Number(searchParams.get('page') || '1');

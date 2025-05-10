@@ -24,12 +24,6 @@ import './article.css'; // 文章样式文件
 // 创建代码高亮实例
 const lowlight = createLowlight(common);
 
-// 注意：在实际使用时，应该在父组件中使用React.Suspense包裹此组件
-// 例如:
-// <Suspense fallback={<LoadingSkeleton />}>
-//   <BlogViewPage />
-// </Suspense>
-// 主页面组件使用Suspense包装内容组件
 export default function BlogViewPage() {
   return (
     <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
