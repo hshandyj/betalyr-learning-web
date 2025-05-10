@@ -3,7 +3,7 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { findDoc } from "@/service/notionEditorService";
 import { isValidObjectID } from "@/lib/utils";
-import ReactResizablePanels from "@/components/MyResizablePanels/ResizablePanels";
+import ReactResizablePanels from "@/components/Edit/MyResizablePanels/ResizablePanels";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ShowsidebarProvider } from "@/lib/context/show-sidebar-context";
 

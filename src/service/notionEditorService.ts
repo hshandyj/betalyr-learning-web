@@ -1,4 +1,4 @@
-import { Document,DocumentList } from "@/types/db";
+import { Document,DocumentList,PublicDocumentList } from "@/types/document";
 import api from "@/lib/api";
 import { getApiUrl } from "@/config/getEnvConfig";
 const API_BASE_URL = getApiUrl();
