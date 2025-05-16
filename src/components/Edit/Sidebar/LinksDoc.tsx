@@ -1,6 +1,6 @@
 "use client";
 
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/Edit/components/Icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";

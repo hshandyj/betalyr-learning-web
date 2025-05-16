@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Icons, type IconsNames } from "../../Icons";
+import { Icons, type IconsNames } from "../components/Icons";
 
 interface SidebarMenuItem {
   onClick?: () => void;

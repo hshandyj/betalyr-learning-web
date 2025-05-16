@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { cn, preventBubbling } from "@/lib/utils";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/Edit/components/Icons";
 import { DocumentType } from "../../../../types/document";
 import { buttonVariants } from "@/components/ui/button";
 

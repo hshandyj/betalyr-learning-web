@@ -6,7 +6,7 @@ import {
 } from "@/config/textConfig";
 import { CldUploadButton } from "next-cloudinary";
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/Edit/components/Icons";
 import { useState, useTransition } from "react";
 import { toast, toastError } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";

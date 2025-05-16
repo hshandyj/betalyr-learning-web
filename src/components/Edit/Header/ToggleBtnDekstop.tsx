@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Icons } from "../../Icons";
+import { Icons } from "../components/Icons";
 import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
 
 const ToggleBtnDekstop: React.FC = () => {
