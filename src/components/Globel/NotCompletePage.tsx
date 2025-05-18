@@ -26,7 +26,7 @@ export default function NotCompletePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            正在建设中
+            Under construction
           </motion.h1>
           
           <motion.p
@@ -35,7 +35,7 @@ export default function NotCompletePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            我们正在努力为您打造精彩的项目展示页面，敬请期待！
+            We are working hard to create a great project showcase page for you, stay tuned!
           </motion.p>
           
           <motion.div 
@@ -46,12 +46,12 @@ export default function NotCompletePage() {
           >
             <div className="flex items-center px-6 py-4 rounded-xl bg-muted">
               <Clock className="w-6 h-6 mr-3 text-primary" />
-              <span>预计上线时间：不久的将来</span>
+              <span>Expected soon</span>
             </div>
             
             <div className="flex items-center px-6 py-4 rounded-xl bg-muted">
               <Sparkles className="w-6 h-6 mr-3 text-primary" />
-              <span>充满惊喜的内容，值得等待</span>
+              <span>Exciting content, worth waiting for</span>
             </div>
           </motion.div>
           
@@ -63,7 +63,7 @@ export default function NotCompletePage() {
           >
             <Link href="/">
               <Button size="lg" className="rounded-full px-8">
-                返回首页
+                Return to home
               </Button>
             </Link>
           </motion.div>

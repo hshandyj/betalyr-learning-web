@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -36,82 +37,83 @@ const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor, container }) => {
           <CaretSortIcon className="h-4 w-4 opacity-50 text-primary" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="overflow-hidden z-[9999] h-[500px] p-0"
-        // container={container}
-      >
-        <div className="max-h-[500px] custom-scroll overflow-y-auto p-1">
-          <DropdownMenuLabel className="text-xxs font-normal py-1">
-            My Account
-          </DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => {
-              editor.chain().focus().unsetColor().run();
-            }}
-            className="cursor-pointer flex gap-2"
-          >
-            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
-              A
-            </span>
-            Default
-          </DropdownMenuItem>
-          {colors.map(({ label, value }, idx) => (
+      <DropdownMenuPortal container={container}>
+        <DropdownMenuContent
+          className="overflow-hidden z-[9999] h-[500px] p-0"
+        >
+          <div className="max-h-[500px] custom-scroll overflow-y-auto p-1">
+            <DropdownMenuLabel className="text-xxs font-normal py-1">
+              My Account
+            </DropdownMenuLabel>
             <DropdownMenuItem
-              key={`color-${idx}`}
               onClick={() => {
-                editor.chain().focus().setColor(value).run();
-                editor.chain().focus().unsetHighlight().run();
-              }}
-              className="cursor-pointer flex gap-2"
-            >
-              <span
-                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
-                style={{
-                  color: value,
-                }}
-              >
-                A
-              </span>
-              {label}
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-xxs font-normal py-1">
-            BACKGROUND
-          </DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => {
-              editor.chain().focus().unsetHighlight().run();
-            }}
-            className="cursor-pointer flex gap-2"
-          >
-            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
-              A
-            </span>
-            Default
-          </DropdownMenuItem>
-          {colors.map(({ label, value }, idx) => (
-            <DropdownMenuItem
-              key={`background-${idx}`}
-              onClick={() => {
-                editor.commands.setHighlight({ color: value });
                 editor.chain().focus().unsetColor().run();
               }}
               className="cursor-pointer flex gap-2"
             >
-              <span
-                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
-                style={{
-                  background: value,
-                }}
-              >
+              <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
                 A
               </span>
-              {label}
+              Default
             </DropdownMenuItem>
-          ))}
-        </div>
-      </DropdownMenuContent>
+            {colors.map(({ label, value }, idx) => (
+              <DropdownMenuItem
+                key={`color-${idx}`}
+                onClick={() => {
+                  editor.chain().focus().setColor(value).run();
+                  editor.chain().focus().unsetHighlight().run();
+                }}
+                className="cursor-pointer flex gap-2"
+              >
+                <span
+                  className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
+                  style={{
+                    color: value,
+                  }}
+                >
+                  A
+                </span>
+                {label}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xxs font-normal py-1">
+              BACKGROUND
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => {
+                editor.chain().focus().unsetHighlight().run();
+              }}
+              className="cursor-pointer flex gap-2"
+            >
+              <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
+                A
+              </span>
+              Default
+            </DropdownMenuItem>
+            {colors.map(({ label, value }, idx) => (
+              <DropdownMenuItem
+                key={`background-${idx}`}
+                onClick={() => {
+                  editor.commands.setHighlight({ color: value });
+                  editor.chain().focus().unsetColor().run();
+                }}
+                className="cursor-pointer flex gap-2"
+              >
+                <span
+                  className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
+                  style={{
+                    background: value,
+                  }}
+                >
+                  A
+                </span>
+                {label}
+              </DropdownMenuItem>
+            ))}
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
     </DropdownMenu>
   );
 };

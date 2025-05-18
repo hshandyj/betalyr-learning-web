@@ -8,6 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
@@ -103,28 +104,29 @@ const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
           <CaretSortIcon className="h-4 w-4 opacity-50 text-primary" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="z-[9999] overflow-hidden"
-        // container={container}
-      >
-        <DropdownMenuLabel className="text-xxs font-normal py-1">
-          Turn into
-        </DropdownMenuLabel>
-        {nodes.map((node, idx) => (
-          <DropdownMenuItem
-            key={idx}
-            onClick={() => handleClick(node.type)}
-            className="cursor-pointer flex justify-between items-center"
-          >
-            {node.label}
-            {currentNode == node.type && (
-              <span className="pl-3">
-                <CheckIcon />
-              </span>
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
+      <DropdownMenuPortal container={container}>
+        <DropdownMenuContent
+          className="z-[9999] overflow-hidden"
+        >
+          <DropdownMenuLabel className="text-xxs font-normal py-1">
+            Turn into
+          </DropdownMenuLabel>
+          {nodes.map((node, idx) => (
+            <DropdownMenuItem
+              key={idx}
+              onClick={() => handleClick(node.type)}
+              className="cursor-pointer flex justify-between items-center"
+            >
+              {node.label}
+              {currentNode == node.type && (
+                <span className="pl-3">
+                  <CheckIcon />
+                </span>
+              )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
     </DropdownMenu>
   );
 };

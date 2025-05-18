@@ -134,3 +134,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* TodoList样式修复 - 减少高度 */
+ul[data-type="taskList"] li {
+  margin-bottom: 0 !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+ul[data-type="taskList"] li > div {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+ul[data-type="taskList"] li > div > p {
+  margin: 0 !important;
+  padding: 0 !important;
+}

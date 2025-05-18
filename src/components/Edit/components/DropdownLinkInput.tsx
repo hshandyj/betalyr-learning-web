@@ -1,6 +1,7 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RefObject, useState } from "react";
@@ -50,40 +51,41 @@ const DropdownLinkInput: React.FC<DropdownLinkInputProps> = ({
             Link
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="center"
-          className="overflow-hidden z-[9999] h-[500px] p-0"
-          // container={container}
-        >
-          <div
-            onClick={preventBubbling}
-            className="flex gap-2 w-full hover:bg-background"
+        <DropdownMenuPortal container={container}>
+          <DropdownMenuContent
+            align="center"
+            className="overflow-hidden z-[9999] h-[500px] p-0"
           >
-            <Input
-              onChange={(e) => setInput(e.target.value)}
-              value={editor.getAttributes("link").href ?? input}
-              placeholder="Paste link"
-              className="rounded-none focus-visible:ring-0 border-none bg-transparent"
-            />
-            {editor.isActive("link") ? (
-              <button
-                type="button"
-                onClick={unsetLink}
-                className="w-[36px] h-[36px] p-2 hover:bg-accent cursor-pointer border-l"
-              >
-                <Cross1Icon className="w-full h-full" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="w-[36px] h-[36px] p-2 hover:bg-accent cursor-pointer border-l"
-                onClick={setLink}
-              >
-                <CheckIcon className="w-full h-full" />
-              </button>
-            )}
-          </div>
-        </DropdownMenuContent>
+            <div
+              onClick={preventBubbling}
+              className="flex gap-2 w-full hover:bg-background"
+            >
+              <Input
+                onChange={(e) => setInput(e.target.value)}
+                value={editor.getAttributes("link").href ?? input}
+                placeholder="Paste link"
+                className="rounded-none focus-visible:ring-0 border-none bg-transparent"
+              />
+              {editor.isActive("link") ? (
+                <button
+                  type="button"
+                  onClick={unsetLink}
+                  className="w-[36px] h-[36px] p-2 hover:bg-accent cursor-pointer border-l"
+                >
+                  <Cross1Icon className="w-full h-full" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="w-[36px] h-[36px] p-2 hover:bg-accent cursor-pointer border-l"
+                  onClick={setLink}
+                >
+                  <CheckIcon className="w-full h-full" />
+                </button>
+              )}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenuPortal>
       </DropdownMenu>
     </>
   );
