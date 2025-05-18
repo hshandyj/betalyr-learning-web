@@ -6,7 +6,7 @@ import { isValidObjectID } from "@/lib/utils";
 import ReactResizablePanels from "@/components/Edit/MyResizablePanels/ResizablePanels";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { ShowsidebarProvider } from "@/lib/context/show-sidebar-context";
-import { useAuth } from "@/lib/hooks/useAuth"; // 假设有这个hook，如果没有需要添加
+import { useAuth } from "@/hooks/useAuth"; // 假设有这个hook，如果没有需要添加
 
 // 创建QueryClient实例 - 在组件外部创建，避免重复创建
 const queryClient = new QueryClient({
