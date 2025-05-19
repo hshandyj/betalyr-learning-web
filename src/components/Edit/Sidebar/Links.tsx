@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { type DocumentType } from "../../../types/document";
-import { Icons } from "../../Icons";
+import { Icons } from "../components/Icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast, toastError } from "@/hooks/use-toast";
 import axios, { AxiosError } from "axios";

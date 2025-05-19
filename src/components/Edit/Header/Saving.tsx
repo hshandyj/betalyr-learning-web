@@ -1,7 +1,7 @@
 "use client";
 
 import { useSaving } from "@/store/use-saving";
-import { Icons } from "../../Icons";
+import { Icons } from "../components/Icons";
 import { cn } from "@/lib/utils";
 
 const Saving: React.FC = () => {

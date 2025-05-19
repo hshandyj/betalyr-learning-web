@@ -86,7 +86,7 @@ export function Navbar() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
-              退出登录
+              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -95,7 +95,7 @@ export function Navbar() {
 
     return (
       <Button variant="default" onClick={() => router.push("/login")}>
-        登录
+        Login
       </Button>
     )
   }

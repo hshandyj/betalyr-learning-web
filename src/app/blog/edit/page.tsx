@@ -1,5 +1,4 @@
 "use client"
-import { getDoc } from "@/service/notionEditorService";
 import Header from "@/components/Edit/Header";
 import CoverImgUploadBtn from "@/components/Edit/Main/CoverImgUploadBtn";
 import CoverImage from "@/components/Edit/Main/coverImage";
@@ -10,60 +9,37 @@ import IconImage from "@/components/Edit/Main/IconImage";
 import Editor from "@/components/Edit/editor";
 import Title from "@/components/Edit/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useState, Suspense } from "react";
-import { Document } from "@/types/document";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
+import { useDocument } from "../edit/layout"; // 导入DocumentContext
+import { Suspense } from "react";
 
-// 创建一个单独的组件来使用useSearchParams
+// 创建一个单独的组件来使用useSearchParams和DocumentContext
 function BlogEditContent() {
   const searchParams = useSearchParams();
   const documentIdParam = searchParams.get('id');
-  const [doc, setDoc] = useState<Document | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<boolean>(false);
+  const { document, isLoading, error } = useDocument();
 
-  useEffect(() => {
-    const fetchDocument = async () => {
-      if (!documentIdParam) {
-        setError(true);
-        setIsLoading(false);
-        return;
-      }
+  // 保存上次访问的文档ID到本地存储
+  if (document && document.id) {
+    localStorage.setItem(LOCAL_LAST_DOCUMENT_KEY, document.id);
+  }
 
-      try {
-        const documentData = await getDoc(documentIdParam);
-        if (!documentData) {
-          setError(true);
-        } else {
-          setDoc(documentData);
-          localStorage.setItem(LOCAL_LAST_DOCUMENT_KEY, documentData.id);
-        }
-      } catch (err) {
-        console.error("获取文档失败:", err);
-        setError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDocument();
-  }, [documentIdParam]);
-
+  // 使用上下文中已加载的文档数据
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">加载中...</div>;
+    return <div className="flex items-center justify-center h-screen">文档加载中...</div>;
   }
   
-  if (error || !doc || !documentIdParam) {
-    return <div className="flex items-center justify-center h-screen">文档不存在或无法访问</div>;
+  if (error || !document || !documentIdParam) {
+    return <div className="flex items-center justify-center h-screen">无法加载文档</div>;
   }
 
-  const { title, coverImage, iconImage, editorJson } = doc;
+  const { title, coverImage, iconImage, editorJson } = document;
   // 确保documentId存在
   const documentId = documentIdParam;
 
   return (
     <>
-      <Header doc={doc} />
+      <Header doc={document} />
       <ScrollArea className="h-[calc(100vh_-_48px)]" type="always">
         <main className="flex flex-col h-[inherit]">
           {coverImage && <CoverImage coverImage={coverImage} id={documentId} />}
@@ -104,10 +80,10 @@ function BlogEditContent() {
   );
 }
 
-// 主页面组件使用Suspense包装内容组件
+// 主页面组件
 export default function BlogEditPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-screen">加载中...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
       <BlogEditContent />
     </Suspense>
   );

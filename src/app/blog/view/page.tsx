@@ -43,7 +43,7 @@ function BlogViewContent() {
   useEffect(() => {
     const fetchPost = async () => {
       if (!id) {
-        setError("无效的文章ID");
+        setError("Invalid article ID");
         setLoading(false);
         return;
       }
@@ -52,13 +52,13 @@ function BlogViewContent() {
         setLoading(true);
         const doc = await getDoc(id);
         if (!doc) {
-          setError("未找到文章");
+          setError("Article not found");
           return;
         }
         setPost(doc);
       } catch (err) {
-        console.error("获取文章详情失败:", err);
-        setError("获取文章详情失败，请稍后再试");
+        console.error("Failed to get article details:", err);
+        setError("Failed to get article details, please try again later");
       } finally {
         setLoading(false);
       }
@@ -85,7 +85,7 @@ function BlogViewContent() {
         },
       }),
       Placeholder.configure({
-        placeholder: '内容为空',
+        placeholder: 'Content is empty',
       }),
       TaskList,
       TaskItem.configure({
@@ -103,7 +103,7 @@ function BlogViewContent() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">正在加载文章...</p>
+        <p className="mt-4 text-muted-foreground">Loading article...</p>
       </div>
     );
   }
@@ -112,12 +112,12 @@ function BlogViewContent() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">文章不存在或已被删除</h2>
-          <p className="text-muted-foreground mb-8">{error || "无法找到请求的文章"}</p>
+          <h2 className="text-2xl font-bold mb-4">Article not found or deleted</h2>
+          <p className="text-muted-foreground mb-8">{error || "Cannot find the requested article"}</p>
           <Button asChild>
             <Link href="/blog">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              返回博客列表
+              Return to blog list
             </Link>
           </Button>
         </div>
@@ -133,7 +133,7 @@ function BlogViewContent() {
           <Button variant="ghost" asChild className="gap-2">
             <Link href="/blog">
               <ArrowLeft className="h-4 w-4" />
-              返回博客列表
+              Return to blog list
             </Link>
           </Button>
         </div>
@@ -172,12 +172,12 @@ function BlogViewContent() {
             </div>
           )}
 
-          <h1 className="text-4xl font-bold mb-6">{post.title || "无标题"}</h1>
+          <h1 className="text-4xl font-bold mb-6">{post.title || "No title"}</h1>
           
           <div className="flex flex-wrap gap-4 text-muted-foreground mb-6">
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>最后更新: {formatDate(post.updatedAt || post.createdAt)}</span>
+              <span>Last updated: {formatDate(post.updatedAt || post.createdAt)}</span>
             </div>
           </div>
 

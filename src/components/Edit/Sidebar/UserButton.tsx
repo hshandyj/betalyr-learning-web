@@ -1,6 +1,6 @@
 "use client";
 
-import { Icons } from "../../Icons";
+import { Icons } from "../components/Icons";
 import { useEffect, useState } from "react";
 import { User } from "firebase/auth";
 import { auth } from "@/lib/firebase";

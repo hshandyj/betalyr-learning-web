@@ -55,7 +55,7 @@ function FeatureCard({
           <h3 className={`text-xl font-bold mb-2 ${isColoredCard ? 'text-white' : 'text-gray-900 dark:text-gray-900'}`}>{title}</h3>
           <p className={`${isColoredCard ? 'text-gray-300' : 'text-gray-700 dark:text-gray-700'} mb-4`}>{description}</p>
           <div className={`flex items-center text-sm font-medium ${isColoredCard ? 'text-white' : 'text-gray-900 dark:text-gray-900'} group-hover:underline`}>
-            开始探索 <ArrowRight className="ml-1 w-4 h-4" />
+            Start exploring <ArrowRight className="ml-1 w-4 h-4" />
           </div>
         </div>
       </Link>
@@ -107,7 +107,7 @@ export default function Home() {
   return buildSomethingAmazing();
 };
 
-// 路在脚下，梦在前方
+// The road is under your feet, the dream is ahead
 createDream();`}</code>
           </pre>
         </div>
@@ -121,7 +121,7 @@ createDream();`}</code>
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            编程之旅，<br />从这里起航
+            Programming journey,<br />start here
           </motion.h1>
           <motion.p 
             className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed"
@@ -129,7 +129,7 @@ createDream();`}</code>
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            这里不仅有深入浅出的技术博客，完整清晰的学习路线图，还有实用的项目开发指南，以及互动学习社区。无论你是初学者还是资深开发者，这里都能帮助你更进一步。
+            Here not only do you have in-depth technical blogs, complete and clear learning roadmaps, but also practical project development guides, and interactive learning communities. Whether you are a beginner or an experienced developer.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -138,7 +138,7 @@ createDream();`}</code>
           >
             <Link href="/blog">
               <Button size="lg" className="rounded-full px-8">
-                开始探索
+                Start exploring
               </Button>
             </Link>
           </motion.div>
@@ -150,7 +150,7 @@ createDream();`}</code>
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           >
-            <p className="text-sm mb-2">向下滚动了解更多</p>
+            <p className="text-sm mb-2">Scroll down to learn more</p>
             <svg 
               className="w-6 h-6 mx-auto" 
               fill="none" 
@@ -179,7 +179,7 @@ createDream();`}</code>
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-4xl font-bold mb-4"
           >
-            探索我们的功能
+            Explore our features
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -188,7 +188,7 @@ createDream();`}</code>
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
-            从学习到实践，从思考到创造，我们提供了全方位的工具和资源，助你实现编程梦想
+            From learning to practice, from thinking to creation, we provide comprehensive tools and resources to help you achieve your programming dreams
           </motion.p>
         </div>
         
@@ -201,48 +201,48 @@ createDream();`}</code>
         >
           <FeatureCard 
             icon={Book} 
-            title="技术博客" 
-            description="深入浅出的技术文章，覆盖前端、后端、移动端等多个领域，从基础到进阶一应俱全。" 
+            title="Technical Blog" 
+            description="In-depth technical articles covering multiple fields such as front-end, back-end, and mobile end, from basic to advanced, all in one." 
             link="/blog"
             color="bg-gradient-to-br from-blue-500 to-purple-600 border-blue-400 text-white"
           />
           
           <FeatureCard 
             icon={Compass} 
-            title="学习路线图" 
-            description="专业规划的学习路径，帮助你清晰了解技术栈的发展方向，节省迷茫时间。" 
+            title="Learning Roadmap" 
+            description="Professional learning path planning to help you clearly understand the development direction of the technology stack." 
             link="/roadmap"
             color="bg-white border-gray-200"
           />
           
           <FeatureCard 
             icon={Code} 
-            title="项目实战" 
-            description="完整的项目开发教程，涵盖前后端和中间件的实现思路，手把手带你构建实用应用。" 
+            title="Project Practice" 
+            description="Complete project development tutorials, covering implementation ideas for front-end, back-end, and middleware." 
             link="/projects"
             color="bg-gradient-to-br from-emerald-500 to-teal-600 border-emerald-400 text-white"
           />
           
           <FeatureCard 
             icon={Video} 
-            title="视频教程" 
-            description="精心制作的视频教程，帮助你更直观地理解复杂概念，提高学习效率。" 
+            title="Video Tutorials" 
+            description="Carefully crafted video tutorials to help you understand complex concepts, improve learning efficiency." 
             link="/videos"
             color="bg-white border-gray-200"
           />
           
           <FeatureCard 
             icon={MessageSquare} 
-            title="树洞 Treehollow" 
-            description="匿名的技术交流平台，在这里你可以畅所欲言，寻求帮助或分享你的见解。" 
+            title="Treehollow" 
+            description="Anonymous technical exchange platform, where you can speak freely, seek help or share your insights." 
             link="/treehollow"
             color="bg-gradient-to-br from-orange-500 to-red-600 border-orange-400 text-white"
           />
           
           <FeatureCard 
             icon={Book} 
-            title="资源中心" 
-            description="精选的编程资源、工具和书籍推荐，助你高效学习和工作。" 
+            title="Resource Center" 
+            description="Handpicked programming resources, tools, and book recommendations to help you learn and work efficiently." 
             link="/resources"
             color="bg-white border-gray-200"
           />
@@ -259,9 +259,9 @@ createDream();`}</code>
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">为什么选择我们的平台？</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">why select us?</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              精心设计的学习体验，注重实战能力培养，致力于打造一站式编程学习平台
+            carefully designed learning experience, focusing on practical ability cultivation, committed to creating a one-stop programming learning platform
             </p>
           </motion.div>
           
@@ -289,9 +289,9 @@ createDream();`}</code>
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-xl font-semibold mb-1">系统化学习路径</h3>
+                    <h3 className="text-xl font-semibold mb-1">Systematic learning path</h3>
                     <p className="text-muted-foreground">
-                      精心规划的学习路线，从零基础到高级开发，每一步都清晰可见
+                      Carefully planned learning path, from zero to advanced development, each step is clear and visible
                     </p>
                   </div>
                 </li>
@@ -303,9 +303,9 @@ createDream();`}</code>
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-xl font-semibold mb-1">注重实战能力</h3>
+                    <h3 className="text-xl font-semibold mb-1">Focus on practical ability</h3>
                     <p className="text-muted-foreground">
-                      大量的项目实战案例，帮助你将理论知识转化为实际开发能力
+                      A large number of project cases, help you transform theoretical knowledge into practical development ability
                     </p>
                   </div>
                 </li>
@@ -317,9 +317,9 @@ createDream();`}</code>
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-xl font-semibold mb-1">社区支持</h3>
+                    <h3 className="text-xl font-semibold mb-1">Community support</h3>
                     <p className="text-muted-foreground">
-                      活跃的开发者社区，随时交流讨论，解决你在学习过程中遇到的问题
+                      Active developer community, discuss and solve problems you encounter in the learning process
                     </p>
                   </div>
                 </li>
@@ -331,9 +331,9 @@ createDream();`}</code>
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-xl font-semibold mb-1">持续更新</h3>
+                    <h3 className="text-xl font-semibold mb-1">Continuous update</h3>
                     <p className="text-muted-foreground">
-                      我们不断更新学习内容，保持与技术发展同步，让你掌握最新的编程知识
+                      We constantly update learning content, keep up with technological development, and help you master the latest programming knowledge
                     </p>
                   </div>
                 </li>
@@ -361,7 +361,7 @@ createDream();`}</code>
             transition={{ duration: 0.6 }}
             className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6"
           >
-            准备好开始你的编程之旅了吗？
+            Are you ready to start your programming journey?
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -370,7 +370,7 @@ createDream();`}</code>
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl mb-10 text-white/80"
           >
-            无论你是编程新手还是有经验的开发者，这里都有适合你的内容。加入我们，一起成长，一起创造！
+            Whether you are a programming novice or an experienced developer, there is content suitable for you here. Join us, grow together, and create together!
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -381,12 +381,12 @@ createDream();`}</code>
           >
             <Link href="/blog">
               <Button size="lg" variant="secondary" className="rounded-full px-8">
-                立即开始
+                Start now
               </Button>
             </Link>
             <Link href="/roadmap">
               <Button size="lg" variant="outline" className="rounded-full px-8 bg-transparent border-white text-white hover:bg-white/20">
-                了解更多
+                Learn more
               </Button>
             </Link>
           </motion.div>

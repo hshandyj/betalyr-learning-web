@@ -1,11 +1,12 @@
 "use client"
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { findDoc } from "@/service/notionEditorService";
+import { getDoc } from "@/service/notionEditorService";
 import { isValidObjectID } from "@/lib/utils";
 import ReactResizablePanels from "@/components/Edit/MyResizablePanels/ResizablePanels";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { ShowsidebarProvider } from "@/lib/context/show-sidebar-context";
+import { useAuth } from "@/hooks/useAuth"; // 假设有这个hook，如果没有需要添加
 
 // 创建QueryClient实例 - 在组件外部创建，避免重复创建
 const queryClient = new QueryClient({
@@ -17,6 +18,22 @@ const queryClient = new QueryClient({
   },
 });
 
+// 创建文档上下文
+import { createContext, useContext } from "react";
+import { Document } from "@/types/document";
+
+export const DocumentContext = createContext<{
+  document: Document | null;
+  isLoading: boolean;
+  error: unknown;
+}>({
+  document: null,
+  isLoading: true,
+  error: null,
+});
+
+export const useDocument = () => useContext(DocumentContext);
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -25,10 +42,9 @@ interface LayoutProps {
 function LayoutContent({ children }: LayoutProps) {
   const searchParams = useSearchParams();
   const documentId = searchParams.get('id');
-  const [isValid, setIsValid] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
   const [defaultLayout, setDefaultLayout] = useState<any>(undefined);
   const [hasLoadedLayout, setHasLoadedLayout] = useState<boolean>(false);
+  const { isAuthenticated, isLoading: isAuthLoading, ready, isVirtualUser } = useAuth();
 
   // 获取默认布局 - 单独的useEffect，只执行一次
   useEffect(() => {
@@ -47,69 +63,59 @@ function LayoutContent({ children }: LayoutProps) {
     }
   }, [hasLoadedLayout]);
 
-  // 验证文档ID - 只在documentId变化时执行
-  useEffect(() => {
-    if (!documentId) {
-      setLoading(false);
-      return;
-    }
-
-    // 重置状态，确保不受先前验证的影响
-    setIsValid(false);
-    setLoading(true);
-
-    const validateDocument = async () => {
-      const validObjectID = isValidObjectID(documentId);
-      if (!validObjectID) {
-        console.error("文档ID格式无效:", documentId);
-        setLoading(false);
-        return;
+  // 使用React Query获取文档
+  const { data: document, isLoading: isDocLoading, error } = useQuery({
+    queryKey: ['document', documentId],
+    queryFn: async () => {
+      if (!documentId || !isValidObjectID(documentId)) {
+        throw new Error("文档ID无效");
       }
+      return getDoc(documentId);
+    },
+    enabled: !!documentId && ready && (isAuthenticated || isVirtualUser), // 认证已完成并且是认证用户或虚拟用户
+    retry: 1,
+    staleTime: 10 * 60 * 1000, // 缓存10分钟
+  });
 
-      try {
-        const document = await findDoc(documentId);
-        if (document) {
-          setIsValid(true);
-        } else {
-          console.error("文档不存在:", documentId);
-        }
-      } catch (error) {
-        console.error("验证文档失败:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // 显示登录加载界面
+  if (isAuthLoading || !ready) {
+    return <div className="h-screen w-full flex items-center justify-center">正在检查登录状态...</div>;
+  }
 
-    validateDocument();
-  }, [documentId]);
+  // 如果未登录且不是虚拟用户，显示提示
+  if (!isAuthLoading && !isAuthenticated && !isVirtualUser) {
+    return <div className="h-screen w-full flex items-center justify-center">请先登录以访问文档</div>;
+  }
 
   // 加载状态
-  if (loading) {
-    return <div className="h-screen w-full flex items-center justify-center">加载中...</div>;
+  if (isDocLoading) {
+    return <div className="h-screen w-full flex items-center justify-center">加载文档中...</div>;
   }
 
   // 文档不存在或无效
-  if (!isValid && !loading) {
+  if (error || !document) {
     return <div className="h-screen w-full flex items-center justify-center">文档不存在或无法访问</div>;
   }
 
-  // 正常渲染
+  // 正常渲染，并通过上下文提供文档数据
   return (
-    <QueryClientProvider client={queryClient}>
+    <DocumentContext.Provider value={{ document, isLoading: isDocLoading, error }}>
       <ShowsidebarProvider showSidebar={true}>
         <div className="h-screen w-full flex">
           <ReactResizablePanels defaultLayout={defaultLayout} right={children} />
         </div>
       </ShowsidebarProvider>
-    </QueryClientProvider>
+    </DocumentContext.Provider>
   );
 }
 
-// 主布局组件，使用Suspense包裹内部组件
+// 主布局组件，使用QueryClientProvider包裹内部组件
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">加载布局...</div>}>
-      <LayoutContent children={children} />
+    <Suspense fallback={<div className="flex items-center justify-center h-screen">Loading...</div>}>
+      <QueryClientProvider client={queryClient}>
+        <LayoutContent children={children} />
+      </QueryClientProvider>
     </Suspense>
   );
 };

@@ -7,7 +7,7 @@ import { startTransition, useState } from "react";
 
 import Image from "next/image";
 import { Document } from "@/types/document";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/Edit/components/Icons";
 import { cn } from "@/lib/utils";
 import Menu from "./Menu";
 import { updateDoc } from "@/service/notionEditorService";

@@ -83,7 +83,7 @@ export const TiptapExtensions = [
         nested: true,
         taskListTypeName: "taskItem",
         HTMLAttributes: {
-          class: `flex items-start pt-2
+          class: `flex items-start pt-0.5 -mb-0.5
                   [&_div_p]:data-[checked=true]:x-[text-primary/50,line-through]
                   [&_input]:data-[checked=true]:x-[bg-sky-600,relative]
                   [&_input]:data-[checked=false]:x-[border-2,border-accent-foreground]

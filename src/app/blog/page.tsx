@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Eye, ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
-import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
+import { createEmptyDoc } from "@/service/notionEditorService";
 import { getPublishedDocs, PaginatedResponse } from "@/service/getPublickService";
 import { PublicDocumentList } from "@/types/document";
 import Image from "next/image";
@@ -135,12 +135,8 @@ function BlogListContent() {
     
     try {
       if (lastDocumentId) {
-        // 验证文档是否存在
-        const docExists = await findDoc(lastDocumentId);
-        if (docExists) {
-          router.push(`/blog/edit?id=${lastDocumentId}`);
-          return;
-        }
+        router.push(`/blog/edit?id=${lastDocumentId}`);
+        return;
       }
       
       // 如果没有上次编辑的文档ID或文档不存在，创建新文档
@@ -180,15 +176,15 @@ function BlogListContent() {
     <div className="min-h-screen bg-background pb-16">
       {/* 顶部横幅 */}
       <div className="bg-primary/10 py-2 px-4 text-center">
-        <p className="text-sm">欢迎来到我们的技术博客 🎉 </p>
+        <p className="text-sm">Welcome to our technical blog 🎉 </p>
       </div>
       
       {/* 页面头部 */}
       <div className="container mx-auto py-12 px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">
           <div>
-            <h1 className="text-4xl font-bold mb-2">技术博客</h1>
-            <p className="text-muted-foreground max-w-2xl">探索最新的技术文章，分享编程见解和经验。</p>
+            <h1 className="text-4xl font-bold mb-2">Technical Blog</h1>
+            <p className="text-muted-foreground max-w-2xl">Explore the latest technical articles, share programming insights and experience.</p>
           </div>
           
           <div className="flex gap-3">
@@ -201,11 +197,11 @@ function BlogListContent() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  加载中...
+                  Loading...
                 </>
               ) : (
                 <>
-                  {lastDocumentId ? "继续编辑" : "开始写作"}
+                  {lastDocumentId ? "Continue editing" : "Start writing"}
                   <ChevronRight className="h-4 w-4" />
                 </>
               )}
@@ -217,7 +213,7 @@ function BlogListContent() {
         <div className="relative max-w-xl mx-auto mb-12">
           <Input
             type="text"
-            placeholder="搜索文章..."
+            placeholder="Search articles..."
             className="pl-10 py-6"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -245,8 +241,8 @@ function BlogListContent() {
               )}
               
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-8">
-                <Badge variant="secondary" className="mb-3 w-fit">精选文章</Badge>
-                <h2 className="text-3xl font-bold text-white mb-3">{featuredPost.title || "无标题"}</h2>
+                <Badge variant="secondary" className="mb-3 w-fit">Featured articles</Badge>
+                <h2 className="text-3xl font-bold text-white mb-3">{featuredPost.title || "No title"}</h2>
                 
                 {/* 标签展示 */}
                 {featuredPost.tags && featuredPost.tags.length > 0 && (
@@ -266,7 +262,7 @@ function BlogListContent() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye className="h-4 w-4" />
-                    <span>查看详情</span>
+                    <span>View details</span>
                   </div>
                 </div>
               </div>
@@ -275,7 +271,7 @@ function BlogListContent() {
         ) : null}
         
         {/* 文章列表 */}
-        <h2 className="text-2xl font-bold mb-8">最新文章</h2>
+        <h2 className="text-2xl font-bold mb-8">Latest articles</h2>
         
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -311,11 +307,11 @@ function BlogListContent() {
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/30 flex items-center justify-center">
-                            <span className="text-lg font-medium text-primary">预览</span>
+                            <span className="text-lg font-medium text-primary">Preview</span>
                           </div>
                         )}
                       </div>
-                      <CardTitle className="line-clamp-2 h-14 group-hover:text-primary transition-colors duration-300">{post.title || "无标题"}</CardTitle>
+                      <CardTitle className="line-clamp-2 h-14 group-hover:text-primary transition-colors duration-300">{post.title || "No title"}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm text-muted-foreground">
@@ -335,7 +331,7 @@ function BlogListContent() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />
-                        <span>查看详情</span>
+                        <span>View details</span>
                       </div>
                     </CardFooter>
                   </Card>
@@ -377,20 +373,20 @@ function BlogListContent() {
                 </Button>
                 
                 <div className="text-sm text-muted-foreground ml-2">
-                  共 {pagination.total} 篇文章，{pagination.totalPages} 页
+                  Total {pagination.total} articles, {pagination.totalPages} pages
                 </div>
               </div>
             )}
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">没有找到符合条件的文章</p>
+            <p className="text-muted-foreground">No articles found</p>
             {searchTerm && (
               <Button 
                 variant="link" 
                 onClick={() => setSearchTerm("")}
               >
-                清除搜索
+                Clear search
               </Button>
             )}
           </div>
