@@ -1,13 +1,13 @@
 "use client"
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { getDoc } from "@/service/notionEditorService";
+import { createEmptyDoc, getDoc } from "@/service/notionEditorService";
 import { isValidObjectID } from "@/lib/utils";
 import ReactResizablePanels from "@/components/Edit/MyResizablePanels/ResizablePanels";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import { ShowsidebarProvider } from "@/lib/context/show-sidebar-context";
+import { ShowsidebarProvider } from "@/contexts/show-sidebar-context";
 import { useAuth } from "@/hooks/useAuth";
-import { DocumentContext } from "@/lib/context/document-context";
+import { DocumentContext } from "@/contexts/document-context";
 
 // 创建QueryClient实例 - 在组件外部创建，避免重复创建
 const queryClient = new QueryClient({
@@ -79,6 +79,7 @@ function LayoutContent({ children }: LayoutProps) {
 
   // 文档不存在或无效
   if (error || !document) {
+    createEmptyDoc();
     return <div className="h-screen w-full flex items-center justify-center">文档不存在或无法访问</div>;
   }
 

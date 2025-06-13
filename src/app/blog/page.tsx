@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Eye, ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
 import { createEmptyDoc } from "@/service/notionEditorService";
-import { getPublishedDocs, PaginatedResponse } from "@/service/getPublickService";
+import { getPublishedDocs, DocumentPaginatedResponse } from "@/service/getPublickService";
 import { PublicDocumentList } from "@/types/document";
 import Image from "next/image";
 import Link from "next/link";
@@ -63,7 +63,7 @@ function BlogListContent() {
       
       // 判断响应是否符合分页格式
       if ('data' in response && 'meta' in response) {
-        const paginatedResponse = response as PaginatedResponse;
+        const paginatedResponse = response as DocumentPaginatedResponse;
         if (paginatedResponse.data.length > 0) {
           // 第一页时，设置第一篇文章为特色文章
           if (page === 1) {
@@ -174,11 +174,6 @@ function BlogListContent() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      {/* 顶部横幅 */}
-      <div className="bg-primary/10 py-2 px-4 text-center">
-        <p className="text-sm">Welcome to our technical blog 🎉 </p>
-      </div>
-      
       {/* 页面头部 */}
       <div className="container mx-auto py-12 px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">

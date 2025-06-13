@@ -121,7 +121,7 @@ createDream();`}</code>
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Programming journey,<br />start here
+            Program journey<br />start here
           </motion.h1>
           <motion.p 
             className="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed"
@@ -129,7 +129,7 @@ createDream();`}</code>
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Here not only do you have in-depth technical blogs, complete and clear learning roadmaps, but also practical project development guides, and interactive learning communities. Whether you are a beginner or an experienced developer.
+            Here not only do you have in-depth technical blogs, complete and clear learning roadmaps, but also practical project development guides, and interactive learning communities.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -202,7 +202,7 @@ createDream();`}</code>
           <FeatureCard 
             icon={Book} 
             title="Technical Blog" 
-            description="In-depth technical articles covering multiple fields such as front-end, back-end, and mobile end, from basic to advanced, all in one." 
+            description="In-depth technical articles covering multiple fields such as front-end, back-end, from basic to advanced, all in one." 
             link="/blog"
             color="bg-gradient-to-br from-blue-500 to-purple-600 border-blue-400 text-white"
           />

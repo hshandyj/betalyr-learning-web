@@ -6,7 +6,7 @@ import { toast, toastError } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserDocs, createEmptyDoc } from "@/service/notionEditorService";
-import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
+import { useShowSidebarContext } from "@/contexts/show-sidebar-context";
 import PanelGroup from "./PanelGroup";
 import PanelSidebar from "./PanelSidebar";
 import PanelResizeHandler from "./PanelResizeHandler";

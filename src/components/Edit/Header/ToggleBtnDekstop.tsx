@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Icons } from "../components/Icons";
-import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
+import { useShowSidebarContext } from "@/contexts/show-sidebar-context";
 
 const ToggleBtnDekstop: React.FC = () => {
   const showSidebar = useShowSidebarContext((s) => s.showSidebar);

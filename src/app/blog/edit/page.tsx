@@ -10,7 +10,7 @@ import Editor from "@/components/Edit/editor";
 import Title from "@/components/Edit/Main/Title";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
-import { useDocument } from "@/lib/context/document-context";
+import { useDocument } from "@/contexts/document-context";
 import { Suspense } from "react";
 
 // 创建一个单独的组件来使用useSearchParams和DocumentContext
