@@ -239,16 +239,16 @@ function VideoGrid({ videos, onDeleteVideo, deletingVideoId }: VideoGridProps) {
                 )}
               </div>
               
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-2 pt-4">
                 <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-blue-600 transition-colors">
                   {video.title}
                 </CardTitle>
-                <CardDescription className="line-clamp-2 text-sm">
+                <CardDescription className="line-clamp-2 text-sm mt-1">
                   {video.description}
                 </CardDescription>
               </CardHeader>
               
-              <CardContent className="pt-0">
+              <CardContent className="pt-1 pb-4">
                 {/* 视频信息 */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm text-slate-500">

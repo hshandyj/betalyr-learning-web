@@ -29,7 +29,10 @@ import {
   List,
   MoreVertical,
   Trash2,
-  Play
+  Play,
+  Repeat,
+  Repeat1,
+  Shuffle
 } from "lucide-react"
 import UploadAudioDialog from "@/components/Media/UploadAudioDialog"
 import AudioPlayer from "@/components/Media/AudioPlayer"
@@ -38,6 +41,7 @@ import { deleteMedia } from "@/service/mediaService"
 import { PublicAudioList } from "@/types/media"
 import { VisuallyHidden } from "@/components/Edit/Sidebar/visually-hidden"
 import { useAudio } from "@/contexts/AudioContext"
+import { PlayMode } from "@/contexts/AudioContext"
 
 export function MusicPlayer() {
   const [isExpanded, setIsExpanded] = React.useState(false)
@@ -54,8 +58,38 @@ export function MusicPlayer() {
     currentAudio, 
     playAudio, 
     clearCurrentAudio,
-    isPlaying 
+    isPlaying,
+    playMode,
+    togglePlayMode
   } = useAudio()
+
+  // 获取播放模式图标
+  const getPlayModeIcon = (mode: PlayMode) => {
+    switch (mode) {
+      case PlayMode.SEQUENCE:
+        return <Repeat className="h-5 w-5" />
+      case PlayMode.LOOP_ONE:
+        return <Repeat1 className="h-5 w-5" />
+      case PlayMode.RANDOM:
+        return <Shuffle className="h-5 w-5" />
+      default:
+        return <Repeat className="h-5 w-5" />
+    }
+  }
+
+  // 获取播放模式提示文字
+  const getPlayModeTooltip = (mode: PlayMode) => {
+    switch (mode) {
+      case PlayMode.SEQUENCE:
+        return "顺序播放"
+      case PlayMode.LOOP_ONE:
+        return "单曲循环"
+      case PlayMode.RANDOM:
+        return "随机播放"
+      default:
+        return "顺序播放"
+    }
+  }
 
   // 加载音频列表
   const loadAudioList = React.useCallback(async () => {
@@ -155,13 +189,23 @@ export function MusicPlayer() {
             <VisuallyHidden>音乐播放器</VisuallyHidden>
           </SheetTitle>
         </SheetHeader>
-        <div className="h-full flex flex-col -mt-2">
-          {/* 播放控制栏 */}
-          <div className="flex h-24 items-center justify-between pt-2">
+        <div className="h-full flex flex-col">
+          {/* 播放控制栏 - 固定高度和位置 */}
+          <div className="flex h-24 items-center justify-between pt-2 flex-shrink-0">
             <AudioPlayer className="flex-1" />
             
             {/* 右侧控制按钮 */}
             <div className="flex items-center gap-2 ml-4">
+              {/* 播放模式切换按钮 */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                title={getPlayModeTooltip(playMode)}
+                onClick={togglePlayMode}
+              >
+                {getPlayModeIcon(playMode)}
+              </Button>
+              
               {/* 播放列表按钮 */}
               <Button 
                 variant="ghost" 
@@ -183,7 +227,7 @@ export function MusicPlayer() {
 
           {/* 播放列表 */}
           {showPlaylist && (
-            <div className="flex-1 mt-4">
+            <div className="flex-1 mt-2">
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">

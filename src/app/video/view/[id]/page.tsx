@@ -180,12 +180,6 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
                 <span className="text-sm text-slate-600 dark:text-slate-400">上传时间:</span>
                 <span className="text-sm">{formatDate(video.uploadTime)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-600 dark:text-slate-400">媒体地址:</span>
-                <span className="text-sm font-mono text-blue-600 truncate max-w-48" title={video.mediaUrl}>
-                  {video.mediaUrl}
-                </span>
-              </div>
             </CardContent>
           </Card>
         </div>

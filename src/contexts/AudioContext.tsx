@@ -5,6 +5,13 @@ import { toast } from "@/hooks/use-toast"
 import { getAudioDetail } from "@/service/mediaService"
 import { AudioDetail, PublicAudioList } from "@/types/media"
 
+// 播放模式枚举
+export enum PlayMode {
+  SEQUENCE = 'sequence',    // 顺序播放
+  LOOP_ONE = 'loop_one',    // 单曲循环
+  RANDOM = 'random'         // 随机播放
+}
+
 interface AudioContextType {
   // 音频状态
   currentAudio: PublicAudioList | null
@@ -15,6 +22,7 @@ interface AudioContextType {
   volume: number
   isMuted: boolean
   isLoading: boolean
+  playMode: PlayMode
   
   // 音频控制方法
   setCurrentAudio: (audio: PublicAudioList | null) => void
@@ -26,6 +34,8 @@ interface AudioContextType {
   seek: (time: number) => void
   setVolume: (volume: number) => void
   toggleMute: () => void
+  setPlayMode: (mode: PlayMode) => void
+  togglePlayMode: () => void
   
   // 播放列表
   audioList: PublicAudioList[]
@@ -57,6 +67,10 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [isMuted, setIsMuted] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
   const [audioList, setAudioList] = React.useState<PublicAudioList[]>([])
+  const [playMode, setPlayMode] = React.useState<PlayMode>(PlayMode.SEQUENCE)
+  
+  // 用于记录是否应该自动播放下一首
+  const shouldAutoPlayRef = React.useRef(false)
   
   // 缓存配置
   const CACHE_EXPIRE_TIME = 30 * 60 * 1000 // 30分钟过期
@@ -133,13 +147,15 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
           audioRef.current.src = cachedDetail.mediaUrl
           audioRef.current.load()
           
-          if (wasPlaying) {
+          if (wasPlaying || shouldAutoPlayRef.current) {
             const handleCanPlay = async () => {
               try {
                 await audioRef.current!.play()
+                shouldAutoPlayRef.current = false // 重置标志
               } catch (error) {
                 console.error("自动播放失败:", error)
                 setIsPlaying(false)
+                shouldAutoPlayRef.current = false
               }
               audioRef.current!.removeEventListener('canplay', handleCanPlay)
             }
@@ -167,13 +183,15 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
           audioRef.current.src = detail.mediaUrl
           audioRef.current.load()
           
-          if (wasPlaying) {
+          if (wasPlaying || shouldAutoPlayRef.current) {
             const handleCanPlay = async () => {
               try {
                 await audioRef.current!.play()
+                shouldAutoPlayRef.current = false // 重置标志
               } catch (error) {
                 console.error("自动播放失败:", error)
                 setIsPlaying(false)
+                shouldAutoPlayRef.current = false
               }
               audioRef.current!.removeEventListener('canplay', handleCanPlay)
             }
@@ -187,6 +205,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Error loading audio detail:", error)
       setIsPlaying(false)
+      shouldAutoPlayRef.current = false
       toast({
         title: "加载失败",
         description: "无法加载音频详情，请重试",
@@ -224,21 +243,93 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isPlaying, currentAudio])
 
-  // 下一首
-  const playNext = React.useCallback(() => {
-    if (!currentAudio || audioList.length === 0) return
-    const currentIndex = audioList.findIndex(audio => audio.id === currentAudio.id)
-    const nextIndex = currentIndex < audioList.length - 1 ? currentIndex + 1 : 0
-    setCurrentAudio(audioList[nextIndex])
-  }, [currentAudio, audioList])
+  // 获取随机索引
+  const getRandomIndex = React.useCallback((currentIndex: number, listLength: number) => {
+    if (listLength <= 1) return 0
+    let randomIndex
+    do {
+      randomIndex = Math.floor(Math.random() * listLength)
+    } while (randomIndex === currentIndex)
+    return randomIndex
+  }, [])
 
-  // 上一首
+  // 下一首（支持不同播放模式）
+  const playNext = React.useCallback((autoPlay: boolean = false) => {
+    if (!currentAudio || audioList.length === 0) return
+    
+    const currentIndex = audioList.findIndex(audio => audio.id === currentAudio.id)
+    let nextIndex: number
+    
+    // 如果是自动播放，设置标志
+    if (autoPlay) {
+      shouldAutoPlayRef.current = true
+    }
+    
+    switch (playMode) {
+      case PlayMode.LOOP_ONE:
+        // 单曲循环：重复当前歌曲
+        if (autoPlay) {
+          // 自动播放时重新播放当前歌曲
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0
+            audioRef.current.play().catch(error => {
+              console.error("重新播放失败:", error)
+              setIsPlaying(false)
+            })
+          }
+          return
+        } else {
+          // 手动切换时还是到下一首
+          nextIndex = currentIndex < audioList.length - 1 ? currentIndex + 1 : 0
+        }
+        break
+        
+      case PlayMode.RANDOM:
+        // 随机播放
+        nextIndex = getRandomIndex(currentIndex, audioList.length)
+        break
+        
+      case PlayMode.SEQUENCE:
+      default:
+        // 顺序播放
+        nextIndex = currentIndex < audioList.length - 1 ? currentIndex + 1 : 0
+        break
+    }
+    
+    setCurrentAudio(audioList[nextIndex])
+  }, [currentAudio, audioList, playMode, getRandomIndex])
+
+  // 上一首（支持不同播放模式）
   const playPrevious = React.useCallback(() => {
     if (!currentAudio || audioList.length === 0) return
+    
     const currentIndex = audioList.findIndex(audio => audio.id === currentAudio.id)
-    const previousIndex = currentIndex > 0 ? currentIndex - 1 : audioList.length - 1
+    let previousIndex: number
+    
+    switch (playMode) {
+      case PlayMode.RANDOM:
+        // 随机播放
+        previousIndex = getRandomIndex(currentIndex, audioList.length)
+        break
+        
+      case PlayMode.LOOP_ONE:
+      case PlayMode.SEQUENCE:
+      default:
+        // 顺序播放和单曲循环在手动切换时都按顺序
+        previousIndex = currentIndex > 0 ? currentIndex - 1 : audioList.length - 1
+        break
+    }
+    
     setCurrentAudio(audioList[previousIndex])
-  }, [currentAudio, audioList])
+  }, [currentAudio, audioList, playMode, getRandomIndex])
+
+  // 切换播放模式
+  const togglePlayMode = React.useCallback(() => {
+    const modes = [PlayMode.SEQUENCE, PlayMode.LOOP_ONE, PlayMode.RANDOM]
+    const currentIndex = modes.indexOf(playMode)
+    const nextIndex = (currentIndex + 1) % modes.length
+    setPlayMode(modes[nextIndex])
+  }, [playMode])
 
   // 跳转到指定时间
   const seek = React.useCallback((time: number) => {
@@ -309,8 +400,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     }
 
     const handleEnded = () => {
-      // 自动播放下一首
-      playNext()
+      // 设置自动播放标志，然后播放下一首
+      shouldAutoPlayRef.current = true
+      playNext(true)
     }
 
     const handleError = (e: Event) => {
@@ -320,6 +412,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       
       console.error("音频播放错误:", e)
       setIsPlaying(false)
+      shouldAutoPlayRef.current = false
       toast({
         title: "播放错误",
         description: "音频播放出现错误",
@@ -355,18 +448,21 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     isMuted,
     isLoading,
     audioList,
+    playMode,
     
     // 方法
     setCurrentAudio,
     clearCurrentAudio,
     togglePlay,
     playAudio,
-    playNext,
+    playNext: () => playNext(false), // 手动切换
     playPrevious,
     seek,
     setVolume,
     toggleMute,
     setAudioList,
+    setPlayMode,
+    togglePlayMode,
     
     // 缓存管理
     clearCache,

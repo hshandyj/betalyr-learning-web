@@ -14,6 +14,7 @@ import {
   Loader2
 } from "lucide-react"
 import { useAudio } from "@/contexts/AudioContext"
+import { PlayMode } from "@/contexts/AudioContext"
 
 interface AudioPlayerProps {
   className?: string
@@ -30,6 +31,7 @@ export default function AudioPlayer({
     volume,
     isMuted,
     isLoading,
+    playMode,
     togglePlay,
     playNext,
     playPrevious,
@@ -44,6 +46,20 @@ export default function AudioPlayer({
     const minutes = Math.floor(time / 60)
     const seconds = Math.floor(time % 60)
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  // 获取播放模式文字
+  const getPlayModeText = (mode: PlayMode) => {
+    switch (mode) {
+      case PlayMode.SEQUENCE:
+        return "顺序播放"
+      case PlayMode.LOOP_ONE:
+        return "单曲循环"
+      case PlayMode.RANDOM:
+        return "随机播放"
+      default:
+        return "顺序播放"
+    }
   }
 
   // 跳转到指定时间
@@ -72,7 +88,7 @@ export default function AudioPlayer({
             {currentAudio?.title || "暂无音乐"}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {formatTime(currentTime)} / {formatTime(duration)}
+            {formatTime(currentTime)} / {formatTime(duration)} • {getPlayModeText(playMode)}
           </p>
         </div>
       </div>
