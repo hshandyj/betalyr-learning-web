@@ -1,20 +1,20 @@
 "use client"
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { getDoc } from "@/service/notionEditorService";
+import { createEmptyDoc, getDoc } from "@/service/notionEditorService";
 import { isValidObjectID } from "@/lib/utils";
 import ReactResizablePanels from "@/components/Edit/MyResizablePanels/ResizablePanels";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import { ShowsidebarProvider } from "@/lib/context/show-sidebar-context";
+import { ShowsidebarProvider } from "@/contexts/show-sidebar-context";
 import { useAuth } from "@/hooks/useAuth";
-import { DocumentContext } from "@/lib/context/document-context";
+import { DocumentContext } from "@/contexts/document-context";
 
 // 创建QueryClient实例 - 在组件外部创建，避免重复创建
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5分钟内数据保持新鲜
+      staleTime: 1 * 60 * 1000, // 1分钟内数据保持新鲜，减少缓存时间
     },
   },
 });
@@ -59,7 +59,7 @@ function LayoutContent({ children }: LayoutProps) {
     },
     enabled: !!documentId && ready && (isAuthenticated || isVirtualUser), // 认证已完成并且是认证用户或虚拟用户
     retry: 1,
-    staleTime: 10 * 60 * 1000, // 缓存10分钟
+    staleTime: 1 * 60 * 1000, // 1分钟内数据保持新鲜，与全局配置保持一致
   });
 
   // 显示登录加载界面
@@ -79,6 +79,7 @@ function LayoutContent({ children }: LayoutProps) {
 
   // 文档不存在或无效
   if (error || !document) {
+    createEmptyDoc();
     return <div className="h-screen w-full flex items-center justify-center">文档不存在或无法访问</div>;
   }
 

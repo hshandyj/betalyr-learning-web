@@ -6,14 +6,14 @@ import { toast, toastError } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserDocs, createEmptyDoc } from "@/service/notionEditorService";
-import { useShowSidebarContext } from "@/lib/context/show-sidebar-context";
+import { useShowSidebarContext } from "@/contexts/show-sidebar-context";
 import PanelGroup from "./PanelGroup";
 import PanelSidebar from "./PanelSidebar";
 import PanelResizeHandler from "./PanelResizeHandler";
 
 const useDocs = () => {
   return useQuery({
-    staleTime: 10 * (60 * 1000), // 10分钟内不重新请求
+    staleTime: 1 * (60 * 1000), // 1分钟内不重新请求，与全局配置保持一致
     queryKey: ["docs"],
     // 实现getUserDocs方法获取文档列表
     queryFn: async () => {

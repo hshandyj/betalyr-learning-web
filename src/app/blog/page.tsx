@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Eye, ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
-import { createEmptyDoc } from "@/service/notionEditorService";
-import { getPublishedDocs, PaginatedResponse } from "@/service/getPublickService";
+import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
+import { getPublishedDocs, DocumentPaginatedResponse } from "@/service/getPublickService";
 import { PublicDocumentList } from "@/types/document";
 import Image from "next/image";
 import Link from "next/link";
@@ -63,7 +63,7 @@ function BlogListContent() {
       
       // 判断响应是否符合分页格式
       if ('data' in response && 'meta' in response) {
-        const paginatedResponse = response as PaginatedResponse;
+        const paginatedResponse = response as DocumentPaginatedResponse;
         if (paginatedResponse.data.length > 0) {
           // 第一页时，设置第一篇文章为特色文章
           if (page === 1) {
@@ -135,8 +135,10 @@ function BlogListContent() {
     
     try {
       if (lastDocumentId) {
-        router.push(`/blog/edit?id=${lastDocumentId}`);
-        return;
+        if(await findDoc(lastDocumentId)) {
+          router.push(`/blog/edit?id=${lastDocumentId}`);
+          return;
+        }
       }
       
       // 如果没有上次编辑的文档ID或文档不存在，创建新文档
@@ -174,11 +176,6 @@ function BlogListContent() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      {/* 顶部横幅 */}
-      <div className="bg-primary/10 py-2 px-4 text-center">
-        <p className="text-sm">Welcome to our technical blog 🎉 </p>
-      </div>
-      
       {/* 页面头部 */}
       <div className="container mx-auto py-12 px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">
@@ -213,7 +210,7 @@ function BlogListContent() {
         <div className="relative max-w-xl mx-auto mb-12">
           <Input
             type="text"
-            placeholder="Search articles..."
+            placeholder="Search Blog"
             className="pl-10 py-6"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

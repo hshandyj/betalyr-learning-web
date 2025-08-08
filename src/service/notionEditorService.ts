@@ -6,7 +6,7 @@ const API_BASE_URL = getApiUrl();
 export async function findDoc(documentId: string): Promise<Boolean | null> {
   try {
     const response = await api.get(`${API_BASE_URL}/documents/findDoc/${documentId}`);
-    return response.status === 200 || response.status === 201;
+    return response.data === true;
   } catch (error) {
     console.error("Error fetching document:", error);
     return null;

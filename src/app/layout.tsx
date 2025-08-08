@@ -4,7 +4,8 @@ import "./globals.css"
 import { ThemeChangePart } from "@/components/Globel/ThemeChangePart"
 import { Navbar } from "@/components/Globel/Navbar"
 import { MusicPlayer } from "@/components/Globel/MusicPlayer"
-import { Toaster } from 'sonner'
+import { AudioProvider } from "@/contexts/AudioContext"
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -21,17 +22,29 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeChangePart
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          <main className="mt-14">{children}</main>
-          <MusicPlayer />
-          <Toaster richColors />
-        </ThemeChangePart>
+        <AudioProvider>
+          <ThemeChangePart
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar />
+            <main className="mt-14">{children}</main>
+            <MusicPlayer />
+            <Toaster 
+              richColors 
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: 'var(--background)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border)',
+                },
+              }}
+            />
+          </ThemeChangePart>
+        </AudioProvider>
       </body>
     </html>
   )

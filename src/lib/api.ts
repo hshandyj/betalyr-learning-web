@@ -1,17 +1,16 @@
 import axios, { AxiosInstance } from "axios";
 import { loginService } from "@/service/LoginService";
 import { VirtualUserManager } from "@/lib/virtualUser";
-import { ResponseModel } from "../types/auth";
 import { toast } from "sonner";
 
-// 定义状态码枚举
-enum StatusCode {
-    SUCCESS = 200,
-    ERROR = 400,
-    UNAUTHORIZED = 401,
-    TOKEN_EXPIRED = 402,
-    INSUFFICIENT_CREDITS = 405,
-}
+// 定义HTTP状态码常量
+const HTTP_STATUS = {
+    OK: 200,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    TOKEN_EXPIRED: 402,
+    INSUFFICIENT_CREDITS: 405,
+} as const;
 
 // 添加自定义错误类型
 export class InsufficientCreditsError extends Error {
@@ -76,26 +75,24 @@ const createAPI = (): AxiosInstance => {
     // 响应拦截器
     api.interceptors.response.use(
         (response) => {
-            const responseData = response.data as ResponseModel<any>;
-            
             // 对于检查未登录用户限制的接口，直接返回响应
             if (response.config.url?.includes('/check-unauth-story-limit')) {
                 return response;
             }
 
-            // 只处理以下特定状态码
-            switch (responseData.code) {
-                case StatusCode.UNAUTHORIZED:
+            // 直接使用HTTP状态码处理
+            switch (response.status) {
+                case HTTP_STATUS.UNAUTHORIZED:
                     loginService.handleUnauthorized();
                     return Promise.reject(new UnauthorizedError());
-                case StatusCode.TOKEN_EXPIRED:
+                case HTTP_STATUS.TOKEN_EXPIRED:
                     toast.error("Session expired, refreshing...", {
                         duration: 3000,
                     });
                     return handleTokenExpired(response.config).catch(() => {
                         throw new TokenExpiredError();
                     });
-                case StatusCode.INSUFFICIENT_CREDITS:
+                case HTTP_STATUS.INSUFFICIENT_CREDITS:
                     toast.error("You have insufficient credits.", {
                         action: {
                             label: "Purchase Credits",
@@ -112,14 +109,13 @@ const createAPI = (): AxiosInstance => {
         async (error) => {
             // 只处理特定的 HTTP 状态码错误
             const status = error.response?.status;
-            const responseData = error.response?.data as ResponseModel<any>;
 
-            if (status === StatusCode.UNAUTHORIZED || responseData?.code === StatusCode.UNAUTHORIZED) {
+            if (status === HTTP_STATUS.UNAUTHORIZED) {
                 loginService.handleUnauthorized();
                 return Promise.reject(new UnauthorizedError());
             } 
             
-            if (status === StatusCode.TOKEN_EXPIRED || responseData?.code === StatusCode.TOKEN_EXPIRED) {
+            if (status === HTTP_STATUS.TOKEN_EXPIRED) {
                 toast.error("Session expired, refreshing...", {
                     duration: 3000,
                 });
@@ -128,7 +124,7 @@ const createAPI = (): AxiosInstance => {
                 });
             }
             
-            if (status === StatusCode.INSUFFICIENT_CREDITS || responseData?.code === StatusCode.INSUFFICIENT_CREDITS) {
+            if (status === HTTP_STATUS.INSUFFICIENT_CREDITS) {
                 toast.error("You have insufficient credits.", {
                     action: {
                         label: "Purchase Credits",
@@ -160,11 +156,8 @@ const createAPI = (): AxiosInstance => {
             loginService.handleUnauthorized();
             return Promise.reject({
                 response: {
-                    status: StatusCode.UNAUTHORIZED,
-                    data: {
-                        code: StatusCode.UNAUTHORIZED,
-                        message: "Token refresh failed",
-                    },
+                    status: HTTP_STATUS.UNAUTHORIZED,
+                    statusText: "Token refresh failed",
                 },
             });
         } catch (error) {
