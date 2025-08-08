@@ -13,7 +13,7 @@ import PanelResizeHandler from "./PanelResizeHandler";
 
 const useDocs = () => {
   return useQuery({
-    staleTime: 10 * (60 * 1000), // 10分钟内不重新请求
+    staleTime: 1 * (60 * 1000), // 1分钟内不重新请求，与全局配置保持一致
     queryKey: ["docs"],
     // 实现getUserDocs方法获取文档列表
     queryFn: async () => {

@@ -10,6 +10,13 @@ import { ChangeEvent, startTransition, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { updateDoc } from "@/service/notionEditorService";
 
+// 扩展Window接口以支持我们的自定义属性
+declare global {
+  interface Window {
+    lastTitleUpdateTime?: number;
+  }
+}
+
 interface TitleProps {
   currentTitle: string;
   id: string;
@@ -19,6 +26,7 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
   const { setIsSaving } = useSaving();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [currentDocId, setCurrentDocId] = useState<string>(id);
 
   const updateTitle = async (value: string) => {
     try {
@@ -28,8 +36,9 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
       await updateDoc(id, { title: value });
 
       startTransition(() => {
-        // Force a cache invalidation.
+        // 同时失效文档列表和当前文档详情缓存
         queryClient.invalidateQueries({ queryKey: ["docs"] });
+        queryClient.invalidateQueries({ queryKey: ["document", id] });
         router.refresh();
       });
     } catch (error) {
@@ -56,18 +65,39 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
     await updateTitle(value);
   }, 1000);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-    debouncedUpdates(e.target.value);
-  };
-
   const [hydrated, setHydrated] = useState<boolean>(false);
 
   const { setTitle, title } = useTitle();
 
+  // 当文档ID改变时，重置title状态并取消pending的保存操作
   useEffect(() => {
-    setTitle(currentTitle);
-  }, [currentTitle, setTitle]);
+    if (id !== currentDocId) {
+      // 取消pending的debounced更新
+      debouncedUpdates.cancel();
+      // 重置为新文档的标题
+      setTitle(currentTitle);
+      setCurrentDocId(id);
+    }
+  }, [id, currentDocId, currentTitle, setTitle, debouncedUpdates]);
+
+  // 监听currentTitle变化，确保缓存更新后能同步到UI
+  useEffect(() => {
+    // 只有在相同文档且title与currentTitle不同时才更新（避免用户正在编辑时被覆盖）
+    if (id === currentDocId && title !== currentTitle) {
+      // 检查用户是否正在编辑（如果最近没有用户输入，则同步服务器数据）
+      const timeSinceLastUpdate = Date.now() - (window.lastTitleUpdateTime || 0);
+      if (timeSinceLastUpdate > 2000) { // 2秒内没有用户操作，同步服务器数据
+        setTitle(currentTitle);
+      }
+    }
+  }, [currentTitle, setTitle, id, currentDocId, title]);
+
+  // 修改handleChange，记录用户操作时间
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    window.lastTitleUpdateTime = Date.now();
+    setTitle(e.target.value);
+    debouncedUpdates(e.target.value);
+  };
 
   useEffect(() => {
     setHydrated(true);
@@ -85,8 +115,15 @@ const Title: React.FC<TitleProps> = ({ currentTitle, id }) => {
     };
     
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [title, currentTitle]);
+    return () => {
+      try {
+        window.removeEventListener('keydown', handleKeyDown);
+      } catch (error) {
+        // 忽略移除事件监听器时的错误
+        console.warn("Failed to remove keydown listener:", error);
+      }
+    };
+  }, [title, currentTitle, updateTitle]);
 
   return (
     <div className="text-4xl font-bold relative h-20 flex flex-col justify-center w-full">

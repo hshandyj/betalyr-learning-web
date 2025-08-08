@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Eye, ChevronRight, Search, ChevronLeft } from "lucide-react";
 import { LOCAL_LAST_DOCUMENT_KEY } from "@/config/textConfig";
-import { createEmptyDoc } from "@/service/notionEditorService";
+import { createEmptyDoc, findDoc } from "@/service/notionEditorService";
 import { getPublishedDocs, DocumentPaginatedResponse } from "@/service/getPublickService";
 import { PublicDocumentList } from "@/types/document";
 import Image from "next/image";
@@ -135,8 +135,10 @@ function BlogListContent() {
     
     try {
       if (lastDocumentId) {
-        router.push(`/blog/edit?id=${lastDocumentId}`);
-        return;
+        if(await findDoc(lastDocumentId)) {
+          router.push(`/blog/edit?id=${lastDocumentId}`);
+          return;
+        }
       }
       
       // 如果没有上次编辑的文档ID或文档不存在，创建新文档
@@ -208,7 +210,7 @@ function BlogListContent() {
         <div className="relative max-w-xl mx-auto mb-12">
           <Input
             type="text"
-            placeholder="Search articles..."
+            placeholder="Search Blog"
             className="pl-10 py-6"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

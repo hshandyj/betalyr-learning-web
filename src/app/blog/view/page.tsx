@@ -114,12 +114,6 @@ function BlogViewContent() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Article not found or deleted</h2>
           <p className="text-muted-foreground mb-8">{error || "Cannot find the requested article"}</p>
-          <Button asChild>
-            <Link href="/blog">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Return to blog list
-            </Link>
-          </Button>
         </div>
       </div>
     );
@@ -127,18 +121,6 @@ function BlogViewContent() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      {/* 导航栏 */}
-      <div className="bg-primary/5 py-4">
-        <div className="container mx-auto">
-          <Button variant="ghost" asChild className="gap-2">
-            <Link href="/blog">
-              <ArrowLeft className="h-4 w-4" />
-              Return to blog list
-            </Link>
-          </Button>
-        </div>
-      </div>
-
       {/* 封面图 */}
       {post.coverImage && (
         <div className="relative w-full h-[400px]">

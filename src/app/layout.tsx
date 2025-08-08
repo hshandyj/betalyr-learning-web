@@ -5,7 +5,7 @@ import { ThemeChangePart } from "@/components/Globel/ThemeChangePart"
 import { Navbar } from "@/components/Globel/Navbar"
 import { MusicPlayer } from "@/components/Globel/MusicPlayer"
 import { AudioProvider } from "@/contexts/AudioContext"
-import { Toaster } from 'sonner'
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,7 +32,17 @@ export default function RootLayout({
             <Navbar />
             <main className="mt-14">{children}</main>
             <MusicPlayer />
-            <Toaster richColors />
+            <Toaster 
+              richColors 
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: 'var(--background)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border)',
+                },
+              }}
+            />
           </ThemeChangePart>
         </AudioProvider>
       </body>

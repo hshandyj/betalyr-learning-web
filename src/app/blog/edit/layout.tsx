@@ -14,7 +14,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5分钟内数据保持新鲜
+      staleTime: 1 * 60 * 1000, // 1分钟内数据保持新鲜，减少缓存时间
     },
   },
 });
@@ -59,7 +59,7 @@ function LayoutContent({ children }: LayoutProps) {
     },
     enabled: !!documentId && ready && (isAuthenticated || isVirtualUser), // 认证已完成并且是认证用户或虚拟用户
     retry: 1,
-    staleTime: 10 * 60 * 1000, // 缓存10分钟
+    staleTime: 1 * 60 * 1000, // 1分钟内数据保持新鲜，与全局配置保持一致
   });
 
   // 显示登录加载界面

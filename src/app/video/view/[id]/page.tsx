@@ -100,7 +100,7 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br bg-background">
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-5xl mx-auto space-y-6">
 
@@ -112,7 +112,7 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
               title={video.title}
             />
           ) : (
-            <Card className="bg-white/80 backdrop-blur-sm border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
+            <Card className="bg-background">
               <CardContent className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <div className="text-red-500 text-lg mb-2">⚠️ 视频加载失败</div>
@@ -125,7 +125,7 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
           )}
 
           {/* 视频信息 */}
-          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
+          <Card className="bg-background">
             <CardHeader>
               <CardTitle className="text-2xl font-bold">{video.title}</CardTitle>
               <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
@@ -151,7 +151,7 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="mt-3 p-0 h-auto text-blue-600 hover:text-blue-700"
+                    className="mt-3 p-0 h-auto text-primary hover:text-primary-dark"
                     onClick={() => setShowDescription(!showDescription)}
                   >
                     {showDescription ? '收起' : '展开更多'}
@@ -163,7 +163,7 @@ export default function VideoViewPage({ params }: { params: Promise<{ id: string
           </Card>
 
           {/* 视频详细信息卡片 */}
-          <Card className="bg-white/80 backdrop-blur-sm border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
+          <Card className="bg-background">
             <CardHeader>
               <CardTitle className="text-lg">视频信息</CardTitle>
             </CardHeader>

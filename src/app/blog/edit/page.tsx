@@ -69,10 +69,10 @@ function BlogEditContent() {
                 </div>
               )}
 
-              <Title currentTitle={title} id={documentId} />
+              <Title key={documentId} currentTitle={title} id={documentId} />
             </div>
 
-            <Editor id={documentId} editorJson={editorJson || {}} />
+            <Editor key={documentId} id={documentId} editorJson={editorJson || {}} />
           </section>
         </main>
       </ScrollArea>
